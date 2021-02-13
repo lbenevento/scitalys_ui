@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="Theme.App.StandaloneChip" parent="@style/Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="TextAppearance.App.StandaloneChip" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+</resources>

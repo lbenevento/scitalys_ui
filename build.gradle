@@ -52,7 +52,7 @@ dependencies {
     implementation project(':bp_traits')
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
@@ -62,8 +62,9 @@ afterEvaluate {
 
     apply plugin: 'maven-publish'
 
-    def githubProperties = new Properties()
-    githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+    def env = System.getenv()
+    def github_usr = env["GITHUB_USR"]
+    def github_key = env["GITHUB_KEY"]
 
     def getVersionName = { ->
         return android.defaultConfig.versionName
@@ -99,8 +100,8 @@ afterEvaluate {
                 name = "GitHubPackages"
                 url = uri("https://maven.pkg.github.com/Lorenzo1818/ui")
                 credentials {
-                    username = githubProperties['gpr.usr'] // ?: System.getenv("GPR_USER")
-                    password = githubProperties['gpr.key'] // ?: System.getenv("GPR_API_KEY")
+                    username = github_usr
+                    password = github_key
                 }
             }
         }

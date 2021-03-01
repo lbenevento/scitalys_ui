@@ -14,6 +14,9 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
+import androidx.dynamicanimation.animation.DynamicAnimation
+import androidx.dynamicanimation.animation.FlingAnimation
+import androidx.dynamicanimation.animation.FloatValueHolder
 import com.google.android.material.card.MaterialCardView
 import com.scitalys.ui.databinding.PairingCardBinding
 import com.scitalys.ui.utils.blendColors
@@ -49,9 +52,12 @@ class PairingCard @JvmOverloads constructor(
     val isExpanded: Boolean
         get() = _isExpanded
 
-    private var _isAnimating = false
-    val isAnimating: Boolean
-        get() = _isAnimating
+    private var _isExpanding = false
+    val isExpanding: Boolean
+        get() = _isExpanding
+    private var _isCollapsing = true
+    val isCollapsing: Boolean
+        get() = _isCollapsing
 
     private val _strokeColor: Int
     private val _strokeWidth: Float
@@ -216,30 +222,33 @@ class PairingCard @JvmOverloads constructor(
     override fun getElevation(): Float = _cardElevation
 
     private fun resize(expand: Boolean, animate: Boolean) {
+
+        val startingHeight = binding.cardView.height
+
         if (animate) {
             val animator = getValueAnimator(
                 expand, expandDuration, AccelerateDecelerateInterpolator()
             ) { progress ->
-                setResizeProgress(progress)
+                setResizeProgress(progress, startingHeight)
             }
 
             if (expand) {
                 animator.doOnStart {
                     expandView.visibility = View.VISIBLE
-                    _isAnimating = true
+                    _isExpanding = true
                 }
                 animator.doOnEnd {
                     _isExpanded = true
-                    _isAnimating = false
+                    _isExpanding = false
                 }
             } else {
                 animator.doOnStart {
-                    _isAnimating = true
+                    _isCollapsing = true
                 }
                 animator.doOnEnd {
                     expandView.visibility = View.GONE
                     _isExpanded = false
-                    _isAnimating = false
+                    _isCollapsing = false
                 }
             }
 
@@ -247,14 +256,14 @@ class PairingCard @JvmOverloads constructor(
         } else {
             expandView.visibility =
                 if (expand && expandedHeight >= 0) View.VISIBLE else View.GONE
-            setResizeProgress(if (expand) 1f else 0f)
+            setResizeProgress(if (expand) 1f else 0f, startingHeight)
         }
     }
 
-    private fun setResizeProgress(progress: Float) {
+    private fun setResizeProgress(progress: Float, startingHeight: Int) {
         if (expandedHeight > 0 && collapsedHeight > 0) {
             cardView.layoutParams.height =
-                (collapsedHeight + (expandedHeight - collapsedHeight) * progress).toInt()
+                (collapsedHeight + (expandedHeight - startingHeight) * progress).toInt()
         }
         cardView.layoutParams.width =
             (collapsedWidth + (expandedWidth - collapsedWidth) * progress).toInt()

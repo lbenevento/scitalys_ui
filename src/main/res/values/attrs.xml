@@ -23,12 +23,12 @@
     </declare-styleable>
 
     <declare-styleable name="TraitChip">
-        <attr name="colorCodomBackground" format="color|reference" />
-        <attr name="colorCodomText" format="color|reference" />
-        <attr name="colorCodomStroke" format="color|reference" />
-        <attr name="colorHetBackground" format="color|reference" />
-        <attr name="colorHetText" format="color|reference" />
-        <attr name="colorHetStroke" format="color|reference" />
+        <attr name="colorCodominantBackground" format="color|reference" />
+        <attr name="colorCodominantText" format="color|reference" />
+        <attr name="colorCodominantStroke" format="color|reference" />
+        <attr name="colorRecessiveBackground" format="color|reference" />
+        <attr name="colorRecessiveText" format="color|reference" />
+        <attr name="colorRecessiveStroke" format="color|reference" />
         <attr name="colorCoallelicBackground" format="color|reference" />
         <attr name="colorCoallelicText" format="color|reference" />
         <attr name="colorCoallelicStroke" format="color|reference" />

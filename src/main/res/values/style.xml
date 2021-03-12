@@ -10,7 +10,6 @@
     </style>
 
     <style name="Widget.ScitalysComponents.PairingCard" parent="Widget.MaterialComponents.CardView">
-<!--        FF424242-->
         <item name="strokeColor">?attr/colorOnSurface</item>
         <item name="strokeWidth">1dp</item>
         <item name="cardElevation">@dimen/cardview_default_elevation</item>
@@ -19,13 +18,14 @@
         <item name="chevronTint">?attr/colorPrimary</item>
     </style>
 
+<!--    Style for TraitChip, it allows to set colors for each kind of TraitChip available.-->
     <style name="Widget.ScitalysComponents.TraiChip" parent="Widget.MaterialComponents.Chip.Choice">
-        <item name="colorCodomBackground">@color/mtrl_choice_chip_background_color</item>
-        <item name="colorCodomText">@color/mtrl_choice_chip_text_color</item>
-        <item name="colorCodomStroke">?attr/colorOnSurface</item>
-        <item name="colorHetBackground">@color/mtrl_choice_chip_background_color</item>
-        <item name="colorHetText">@color/mtrl_choice_chip_text_color</item>
-        <item name="colorHetStroke">?attr/colorOnSurface</item>
+        <item name="colorCodominantBackground">@color/mtrl_choice_chip_background_color</item>
+        <item name="colorCodominantText">@color/mtrl_choice_chip_text_color</item>
+        <item name="colorCodominantStroke">?attr/colorOnSurface</item>
+        <item name="colorRecessiveBackground">@color/mtrl_choice_chip_background_color</item>
+        <item name="colorRecessiveText">@color/mtrl_choice_chip_text_color</item>
+        <item name="colorRecessiveStroke">?attr/colorOnSurface</item>
         <item name="colorCoallelicBackground">@color/mtrl_choice_chip_background_color</item>
         <item name="colorCoallelicText">@color/mtrl_choice_chip_text_color</item>
         <item name="colorCoallelicStroke">?attr/colorOnSurface</item>

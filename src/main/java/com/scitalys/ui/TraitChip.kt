@@ -2,24 +2,12 @@ package com.scitalys.ui
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.util.AttributeSet
 import com.google.android.material.chip.Chip
 import com.scitalys.bp_traits.GeneType
 import com.scitalys.bp_traits.Trait
 import java.lang.IllegalStateException
-
-//    R.attr.colorCodomBackground,
-//    R.attr.colorCodomText,
-//    R.attr.colorCodomStroke,
-//
-//    R.attr.colorHetBackground,
-//    R.attr.colorHetText,
-//    R.attr.colorHetStroke,
-//
-//    R.attr.colorCoallelicBackground,
-//    R.attr.colorCoallelicText,
-//    R.attr.colorCoallelicStroke
-//)
 
 class TraitChip @JvmOverloads constructor(
     context: Context,
@@ -49,28 +37,28 @@ class TraitChip @JvmOverloads constructor(
         ).apply {
             try {
                 codominantBG = getColor(
-                    R.styleable.TraitChip_colorCodomBackground,
+                    R.styleable.TraitChip_colorCodominantBackground,
                     0
                 )
                 codominantText = getColor(
-                    R.styleable.TraitChip_colorCodomText,
+                    R.styleable.TraitChip_colorCodominantText,
                     0
                 )
                 codominantStroke = getColor(
-                    R.styleable.TraitChip_colorCodomStroke,
+                    R.styleable.TraitChip_colorCodominantStroke,
                     0
                 )
 
                 recessiveBG = getColor(
-                    R.styleable.TraitChip_colorHetBackground,
+                    R.styleable.TraitChip_colorRecessiveBackground,
                     0
                 )
                 recessiveText = getColor(
-                    R.styleable.TraitChip_colorHetText,
+                    R.styleable.TraitChip_colorRecessiveText,
                     0
                 )
                 recessiveStroke = getColor(
-                    R.styleable.TraitChip_colorHetStroke,
+                    R.styleable.TraitChip_colorRecessiveStroke,
                     0
                 )
 
@@ -111,28 +99,53 @@ class TraitChip @JvmOverloads constructor(
         val strokeColor: ColorStateList
         val textColor: Int
 
-        when (_trait.geneType) {
-            GeneType.CODOMINANT -> {
-                bgColor = ColorStateList.valueOf(this.codominantBG)
-                strokeColor = ColorStateList.valueOf(codominantStroke)
-                textColor = this.codominantBG
-            }
-            GeneType.DOMINANT -> {
-                bgColor = ColorStateList.valueOf(this.codominantBG)
-                strokeColor = ColorStateList.valueOf(codominantStroke)
-                textColor = this.codominantBG
-            }
-            GeneType.RECESSIVE -> {
-                bgColor = ColorStateList.valueOf(recessiveBG)
-                strokeColor = ColorStateList.valueOf(recessiveStroke)
-                textColor = this.recessiveStroke
-            }
-            GeneType.COALLELIC -> {
-                bgColor = ColorStateList.valueOf(this.coallelicBG)
-                strokeColor = ColorStateList.valueOf(coallelicStroke)
-                textColor = this.coallelicText
-            }
-            else -> throw IllegalStateException("geneType cannot be ${_trait.geneType}")
+//        when (_trait.geneType) {
+//            GeneType.CODOMINANT -> {
+//                bgColor = ColorStateList.valueOf(this.codominantBG)
+//                strokeColor = ColorStateList.valueOf(codominantStroke)
+//                textColor = this.codominantBG
+//            }
+//            GeneType.DOMINANT -> {
+//                bgColor = ColorStateList.valueOf(this.codominantBG)
+//                strokeColor = ColorStateList.valueOf(codominantStroke)
+//                textColor = this.codominantBG
+//            }
+//            GeneType.RECESSIVE -> {
+//                bgColor = ColorStateList.valueOf(recessiveBG)
+//                strokeColor = ColorStateList.valueOf(recessiveStroke)
+//                textColor = this.recessiveStroke
+//            }
+//            GeneType.COALLELIC -> {
+//                bgColor = ColorStateList.valueOf(this.coallelicBG)
+//                strokeColor = ColorStateList.valueOf(coallelicStroke)
+//                textColor = this.coallelicText
+//            }
+//            else -> throw IllegalStateException("geneType cannot be ${_trait.geneType}")
+//        }
+
+        /**
+         * Super
+         */
+        if (_trait.geneLG1 != null && _trait.geneLG2 != null) {
+            bgColor = ColorStateList.valueOf(this.coallelicBG)
+            strokeColor = ColorStateList.valueOf(coallelicStroke)
+            textColor = this.coallelicText
+        }
+        /**
+         * Het
+         */
+        else if (_trait.geneLG1 == null && _trait.geneLG2 != null) {
+            bgColor = ColorStateList.valueOf(recessiveBG)
+            strokeColor = ColorStateList.valueOf(recessiveStroke)
+            textColor = this.recessiveStroke
+        }
+        /**
+         * Codom
+         */
+        else {
+            bgColor = ColorStateList.valueOf(this.codominantBG)
+            strokeColor = ColorStateList.valueOf(codominantStroke)
+            textColor = this.codominantBG
         }
 
         this.chipBackgroundColor = bgColor

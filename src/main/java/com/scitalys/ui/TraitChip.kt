@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.util.AttributeSet
+import androidx.core.graphics.toColor
 import com.google.android.material.chip.Chip
 import com.scitalys.bp_traits.GeneType
 import com.scitalys.bp_traits.Trait
@@ -137,7 +138,7 @@ class TraitChip @JvmOverloads constructor(
         else if (_trait.geneLG1 == null && _trait.geneLG2 != null) {
             bgColor = ColorStateList.valueOf(recessiveBG)
             strokeColor = ColorStateList.valueOf(recessiveStroke)
-            textColor = this.recessiveStroke
+            textColor = this.recessiveText
         }
         /**
          * Codom
@@ -145,7 +146,7 @@ class TraitChip @JvmOverloads constructor(
         else {
             bgColor = ColorStateList.valueOf(this.codominantBG)
             strokeColor = ColorStateList.valueOf(codominantStroke)
-            textColor = this.codominantBG
+            textColor = this.codominantText
         }
 
         this.chipBackgroundColor = bgColor

@@ -20,6 +20,7 @@
 
 <!--    Style for TraitChip, it allows to set colors for each kind of TraitChip available.-->
     <style name="Widget.ScitalysComponents.TraiChip" parent="Widget.MaterialComponents.Chip.Choice">
+        <!-- Chips colors -->
         <item name="colorCodominantBackground">@color/mtrl_choice_chip_background_color</item>
         <item name="colorCodominantText">@color/mtrl_choice_chip_text_color</item>
         <item name="colorCodominantStroke">?attr/colorOnSurface</item>
@@ -29,6 +30,9 @@
         <item name="colorCoallelicBackground">@color/mtrl_choice_chip_background_color</item>
         <item name="colorCoallelicText">@color/mtrl_choice_chip_text_color</item>
         <item name="colorCoallelicStroke">?attr/colorOnSurface</item>
+        <!-- Paddings, start and end padding are already supported by the super class. -->
+        <item name="chipTopPadding">0dp</item>
+        <item name="chipBottomPadding">0dp</item>
     </style>
 
 </resources>

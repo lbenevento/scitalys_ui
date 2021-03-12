@@ -2,13 +2,11 @@ package com.scitalys.ui
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.util.AttributeSet
-import androidx.core.graphics.toColor
+import android.view.View
 import com.google.android.material.chip.Chip
-import com.scitalys.bp_traits.GeneType
 import com.scitalys.bp_traits.Trait
-import java.lang.IllegalStateException
+import com.scitalys.ui.utils.dp
 
 class TraitChip @JvmOverloads constructor(
     context: Context,
@@ -29,6 +27,9 @@ class TraitChip @JvmOverloads constructor(
     private var coallelicBG: Int
     private var coallelicText: Int
     private var coallelicStroke: Int
+
+    private var chipTopPadding: Float
+    private var chipBottomPadding: Float
 
     init {
         context.theme.obtainStyledAttributes(
@@ -74,6 +75,17 @@ class TraitChip @JvmOverloads constructor(
                 coallelicStroke = getColor(
                     R.styleable.TraitChip_colorCoallelicStroke,
                     0
+                )
+                /**
+                 * Paddings
+                 */
+                chipTopPadding = getDimension(
+                    R.styleable.TraitChip_chipTopPadding,
+                    0F
+                )
+                chipBottomPadding = getDimension(
+                    R.styleable.TraitChip_chipBottomPadding,
+                    0F
                 )
             } finally {
                 recycle()
@@ -152,5 +164,43 @@ class TraitChip @JvmOverloads constructor(
         this.chipBackgroundColor = bgColor
         this.chipStrokeColor = strokeColor
         this.setTextColor(textColor)
+
+//        chip.setEnsureMinTouchTargetSize(false)
+
+        /**
+         * Paddings
+         */
+        val paddingTop = paddingTop + chipTopPadding
+        val paddingBottom = paddingBottom + chipBottomPadding
+
+        /**
+         * Support for RTL languages.
+         */
+//        val config = resources.configuration
+//        if (config.layoutDirection == View.LAYOUT_DIRECTION_LTR) {
+//            paddingLeft = chipStartPadding
+//            paddingRight = chipEndPadding
+//        } else {
+//            paddingLeft = chipEndPadding
+//            paddingRight = chipStartPadding
+//        }
+
+        this.setPadding(
+            paddingLeft,
+            paddingTop.toInt(),
+            paddingRight,
+            paddingBottom.toInt(),
+        )
+
+//        chip.textStartPadding = 15f
+//        chip.textEndPadding = 15f
+//        chip.chipEndPadding = 0f
+//        chip.chipStartPadding = 0f
+//        chip.textAlignment = TEXT_ALIGNMENT_CENTER
+//
+//        chip.minWidth = 0
+//
+//        chip.minHeight = 0
+//        chip.chipMinHeight = 0f
     }
 }

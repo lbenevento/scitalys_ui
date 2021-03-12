@@ -1,23 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="morphInputText">
-        <attr name="chipBackgroundColor" format="color|reference"/>
-        <attr name="chipStrokeColor" format="color|reference"/>
-        <attr name="chipTextColor" format="color|reference"/>
+        <attr name="chipBackgroundColor" format="color|reference" />
+        <attr name="chipStrokeColor" format="color|reference" />
+        <attr name="chipTextColor" format="color|reference" />
 
-        <attr name="chipStrokeWidth" format="dimension"/>
-        <attr name="chipStartMargin" format="integer"/>
+        <attr name="chipStrokeWidth" format="dimension" />
+        <attr name="chipStartMargin" format="integer" />
 
-        <attr name="allowUserChips" format="boolean"/>
-        <attr name="allowDuplicate" format="boolean"/>
-        <attr name="caseSensitive" format="boolean"/>
+        <attr name="allowUserChips" format="boolean" />
+        <attr name="allowDuplicate" format="boolean" />
+        <attr name="caseSensitive" format="boolean" />
     </declare-styleable>
+
     <declare-styleable name="pairingCard">
-        <attr name="strokeColor" format="color|reference"/>
-        <attr name="strokeWidth" format="dimension"/>
-        <attr name="cardElevation" format="dimension"/>
-        <attr name="collapsedBackgroundColor" format="color"/>
-        <attr name="expandedBackgroundColor" format="color"/>
-        <attr name="chevronTint" format="color"/>
+        <attr name="strokeColor" format="color|reference" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="cardElevation" format="dimension" />
+        <attr name="collapsedBackgroundColor" format="color" />
+        <attr name="expandedBackgroundColor" format="color" />
+        <attr name="chevronTint" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="TraitChip">
+        <attr name="colorCodomBackground" format="color|reference" />
+        <attr name="colorCodomText" format="color|reference" />
+        <attr name="colorCodomStroke" format="color|reference" />
+        <attr name="colorHetBackground" format="color|reference" />
+        <attr name="colorHetText" format="color|reference" />
+        <attr name="colorHetStroke" format="color|reference" />
+        <attr name="colorCoallelicBackground" format="color|reference" />
+        <attr name="colorCoallelicText" format="color|reference" />
+        <attr name="colorCoallelicStroke" format="color|reference" />
     </declare-styleable>
 </resources>

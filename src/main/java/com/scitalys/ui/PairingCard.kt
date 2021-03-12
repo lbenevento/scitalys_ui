@@ -96,7 +96,7 @@ class PairingCard @JvmOverloads constructor(
         context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.pairingCard,
-            0, 0
+            defStyleAttr, R.style.Widget_ScitalysComponents_PairingCard
         ).apply {
             try {
                 _strokeColor = getColor(

@@ -35,7 +35,7 @@ class TraitChip @JvmOverloads constructor(
         context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.TraitChip,
-            0, R.style.Widget_ScitalysComponents_TraiChip
+            R.attr.traitChipStyle, R.style.Widget_ScitalysComponents_TraiChip
         ).apply {
             try {
                 codominantBG = getColor(

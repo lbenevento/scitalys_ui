@@ -23,6 +23,7 @@
     </declare-styleable>
 
     <declare-styleable name="TraitChip">
+        <attr name="traitChipStyle" format="reference" />
         <!-- Chip colors -->
         <attr name="colorCodominantBackground" format="color|reference" />
         <attr name="colorCodominantText" format="color|reference" />

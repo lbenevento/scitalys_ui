@@ -1,5 +1,7 @@
 package com.scitalys.ui
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -10,19 +12,15 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.animation.doOnEnd
-import androidx.core.animation.doOnStart
 import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
-import androidx.dynamicanimation.animation.DynamicAnimation
-import androidx.dynamicanimation.animation.FlingAnimation
-import androidx.dynamicanimation.animation.FloatValueHolder
 import com.google.android.material.card.MaterialCardView
 import com.scitalys.ui.databinding.PairingCardBinding
 import com.scitalys.ui.utils.blendColors
 import com.scitalys.ui.utils.dp
 import com.scitalys.ui.utils.getColorFromAttr
 import com.scitalys.ui.utils.getValueAnimator
+import java.lang.IllegalStateException
 
 
 class PairingCard @JvmOverloads constructor(
@@ -65,6 +63,38 @@ class PairingCard @JvmOverloads constructor(
     private val _chevronTint: Int
 
     private var isFirstTime = true
+
+    private lateinit var animator: ValueAnimator
+
+    private val onSEExpandListener = object: Animator.AnimatorListener {
+        override fun onAnimationStart(animation: Animator?) {
+            expandView.visibility = View.VISIBLE
+            _isExpanding = true
+        }
+
+        override fun onAnimationEnd(animation: Animator?) {
+            _isExpanded = true
+            _isExpanding = false
+        }
+
+        override fun onAnimationCancel(animation: Animator?) { }
+        override fun onAnimationRepeat(animation: Animator?) { }
+    }
+
+    private val onSECollapseListener = object: Animator.AnimatorListener {
+        override fun onAnimationStart(animation: Animator?) {
+            _isCollapsing = true
+        }
+
+        override fun onAnimationEnd(animation: Animator?) {
+            expandView.visibility = View.GONE
+            _isExpanded = false
+            _isCollapsing = false
+        }
+
+        override fun onAnimationCancel(animation: Animator?) { }
+        override fun onAnimationRepeat(animation: Animator?) { }
+    }
 
     /**
      * Binding variables
@@ -223,47 +253,46 @@ class PairingCard @JvmOverloads constructor(
 
     private fun resize(expand: Boolean, animate: Boolean) {
 
-        val startingHeight = binding.cardView.height
-
         if (animate) {
-            val animator = getValueAnimator(
-                expand, expandDuration, AccelerateDecelerateInterpolator()
-            ) { progress ->
-                setResizeProgress(progress, startingHeight)
-            }
-
-            if (expand) {
-                animator.doOnStart {
-                    expandView.visibility = View.VISIBLE
-                    _isExpanding = true
-                }
-                animator.doOnEnd {
-                    _isExpanded = true
-                    _isExpanding = false
+            if (::animator.isInitialized) {
+                if (animator.isRunning) {
+                    // Should be expanded, so reverse the animation if it is collapsing
+                    if (expand && _isCollapsing) {
+                        animator.setOnSEForExpand()
+                    }
+                    // Should be collapsed, so reverse the animation if it is expanding
+                    else if (!expand && _isExpanding) {
+                        animator.setOnSEForCollapse()
+                    }
+                    animator.reverse()
+                } else {
+                    // Should be expanded, so set proper onStart, onEnd and float values
+                    if (expand && !_isExpanded) {
+                        animator.setFloatValues(0f, 1f)
+                        animator.setOnSEForExpand()
+                    }
+                    // Should be collapsed, se set proper onStart, onEnd and float values
+                    else if (!expand && _isExpanded) {
+                        animator.setFloatValues(1f, 0f)
+                        animator.setOnSEForCollapse()
+                    }
+                    animator.start()
                 }
             } else {
-                animator.doOnStart {
-                    _isCollapsing = true
-                }
-                animator.doOnEnd {
-                    expandView.visibility = View.GONE
-                    _isExpanded = false
-                    _isCollapsing = false
-                }
+                animator = getNewAnimator(expand)
+                animator.start()
             }
-
-            animator.start()
         } else {
             expandView.visibility =
                 if (expand && expandedHeight >= 0) View.VISIBLE else View.GONE
-            setResizeProgress(if (expand) 1f else 0f, startingHeight)
+            setResizeProgress(if (expand) 1f else 0f)
         }
     }
 
-    private fun setResizeProgress(progress: Float, startingHeight: Int) {
+    private fun setResizeProgress(progress: Float) {
         if (expandedHeight > 0 && collapsedHeight > 0) {
             cardView.layoutParams.height =
-                (collapsedHeight + (expandedHeight - startingHeight) * progress).toInt()
+                    (collapsedHeight + (expandedHeight - collapsedHeight) * progress).toInt()
         }
         cardView.layoutParams.width =
             (collapsedWidth + (expandedWidth - collapsedWidth) * progress).toInt()
@@ -279,4 +308,28 @@ class PairingCard @JvmOverloads constructor(
 
         cardView.requestLayout()
     }
+
+    private fun getNewAnimator(expand: Boolean) : ValueAnimator{
+        animator = getValueAnimator(
+            expand, expandDuration, AccelerateDecelerateInterpolator()
+        ) { progress ->
+            setResizeProgress(progress)
+        }
+
+        if (expand) animator.setOnSEForExpand()
+        else animator.setOnSEForCollapse()
+
+        return animator
+    }
+
+    private fun Animator.setOnSEForExpand() {
+        this.removeListener(onSECollapseListener)
+        this.addListener(onSEExpandListener)
+    }
+
+    private fun Animator.setOnSEForCollapse() {
+        this.removeListener(onSEExpandListener)
+        this.addListener(onSECollapseListener)
+    }
+
 }

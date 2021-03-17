@@ -14,6 +14,8 @@
     </declare-styleable>
 
     <declare-styleable name="pairingCard">
+        <attr name="pairingCardStyle" format="reference" />
+
         <attr name="strokeColor" format="color|reference" />
         <attr name="strokeWidth" format="dimension" />
         <attr name="cardElevation" format="dimension" />

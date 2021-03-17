@@ -26,7 +26,7 @@ import java.lang.IllegalStateException
 class PairingCard @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = R.attr.pairingCardStyle
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     private val binding: PairingCardBinding

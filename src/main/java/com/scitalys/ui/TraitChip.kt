@@ -3,15 +3,13 @@ package com.scitalys.ui
 import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
-import android.view.View
 import com.google.android.material.chip.Chip
 import com.scitalys.bp_traits.Trait
-import com.scitalys.ui.utils.dp
 
 class TraitChip @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = R.attr.traitChipStyle
 ) : Chip(context, attrs, defStyleAttr) {
 
     private var trait: Trait? = null
@@ -35,7 +33,7 @@ class TraitChip @JvmOverloads constructor(
         context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.TraitChip,
-            R.attr.traitChipStyle, R.style.Widget_ScitalysComponents_TraiChip
+            defStyleAttr, R.style.Widget_ScitalysComponents_TraiChip
         ).apply {
             try {
                 codominantBG = getColor(

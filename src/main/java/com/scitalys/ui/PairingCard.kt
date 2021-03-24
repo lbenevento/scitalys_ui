@@ -15,19 +15,19 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.card.MaterialCardView
+import com.scitalys.bp_traits.models.Pairing
 import com.scitalys.ui.databinding.PairingCardBinding
 import com.scitalys.ui.utils.blendColors
 import com.scitalys.ui.utils.dp
 import com.scitalys.ui.utils.getColorFromAttr
 import com.scitalys.ui.utils.getValueAnimator
-import java.lang.IllegalStateException
 
 
 class PairingCard @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = R.attr.pairingCardStyle
-) : FrameLayout(context, attrs, defStyleAttr) {
+) : MaterialCardView(context, attrs, defStyleAttr) {
 
     private val binding: PairingCardBinding
 
@@ -36,8 +36,6 @@ class PairingCard @JvmOverloads constructor(
 
     private var collapsedHeight = -1
     private var expandedHeight = -1
-
-    private var expandViewHeight = -1
 
     private val collapsedBg: Int
     private val expandedBg: Int
@@ -59,10 +57,14 @@ class PairingCard @JvmOverloads constructor(
 
     private val _strokeColor: Int
     private val _strokeWidth: Float
-    private val _cardElevation: Float
+    private var _collapsedElevation: Float
+    private val _expandedElevation: Float
+    private val _cardCornerRadius: Float
     private val _chevronTint: Int
 
     private var isFirstTime = true
+
+    private var _pairing: Pairing? = null
 
     private lateinit var animator: ValueAnimator
 
@@ -100,7 +102,6 @@ class PairingCard @JvmOverloads constructor(
      * Binding variables
      */
     private val cardContentContainer: FrameLayout
-    private val cardView: MaterialCardView
     private val chevron: ImageView
     private val expandView: FrameLayout
     private val header: FrameLayout
@@ -114,7 +115,6 @@ class PairingCard @JvmOverloads constructor(
             true
         )
         cardContentContainer = binding.cardContentContainer
-        cardView = binding.cardView
         chevron = binding.chevron
         expandView = binding.expandView
         header = binding.header
@@ -140,9 +140,17 @@ class PairingCard @JvmOverloads constructor(
                     R.styleable.pairingCard_strokeWidth,
                     1f.dp
                 )
-                _cardElevation = getDimension(
-                    R.styleable.pairingCard_cardElevation,
+                _cardCornerRadius = getDimension(
+                    R.styleable.pairingCard_cardCornerRadius,
+                    4f.dp
+                )
+                _collapsedElevation = getDimension(
+                    R.styleable.pairingCard_collapsedCardElevation,
                     1f.dp
+                )
+                _expandedElevation = getDimension(
+                    R.styleable.pairingCard_expandedCardElevation,
+                    4f.dp
                 )
                 collapsedBg = getColor(
                     R.styleable.pairingCard_collapsedBackgroundColor,
@@ -174,48 +182,59 @@ class PairingCard @JvmOverloads constructor(
          * Set retrieved styled attributes
          */
 
-        cardView.strokeColor = Color.TRANSPARENT
-        cardView.elevation = 0f
-        cardView.strokeWidth = _strokeWidth.toInt()
-        cardView.setCardBackgroundColor(ColorStateList.valueOf(collapsedBg))
+        this.strokeColor = Color.TRANSPARENT
+        this.strokeWidth = _strokeWidth.toInt()
+        this.elevation = _collapsedElevation
+        this.radius = _cardCornerRadius
+        this.setCardBackgroundColor(ColorStateList.valueOf(collapsedBg))
         chevron.setColorFilter(_chevronTint)
 
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-
-        if (collapsedWidth < 0 || expandedWidth < 0) {
-            collapsedWidth = MeasureSpec.getSize(widthMeasureSpec) - 24.dp - paddingLeft - paddingRight
-            expandedWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
-        }
-
-        if (collapsedHeight < 0) {
-            expandView.visibility = View.GONE
-            cardView.measure(
-                MeasureSpec.makeMeasureSpec(collapsedWidth, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-            )
-            collapsedHeight = cardView.measuredHeight
-        }
-        if (expandedHeight < 0) {
-            expandView.visibility = View.VISIBLE
-            expandView.measure(
-                MeasureSpec.makeMeasureSpec(scaleContainer.measuredWidth, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-            )
-            expandedHeight = collapsedHeight + expandView.measuredHeight
-            expandView.visibility = View.GONE
-        }
-
-        if(collapsedWidth > 0 && expandedWidth > 0 && isFirstTime){
-            cardView.layoutParams.width = collapsedWidth
-            isFirstTime = false
-        }
-
         super.onMeasure(
             widthMeasureSpec,
             heightMeasureSpec
         )
+
+        post {
+            if (collapsedWidth < 0 || expandedWidth < 0) {
+                collapsedWidth = MeasureSpec.getSize(widthMeasureSpec) - 24.dp - paddingLeft - paddingRight
+                expandedWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
+            }
+
+            if (collapsedHeight < 0) {
+                expandView.visibility = View.GONE
+            this.measure(
+                MeasureSpec.makeMeasureSpec(collapsedWidth, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+            )
+                collapsedHeight = this.measuredHeight
+            }
+            if (expandedHeight < 0) {
+                expandView.visibility = View.VISIBLE
+                expandView.measure(
+                    MeasureSpec.makeMeasureSpec(scaleContainer.measuredWidth, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+                )
+                expandedHeight = collapsedHeight + expandView.measuredHeight
+                expandView.visibility = View.GONE
+            }
+
+            if(collapsedWidth > 0 && expandedWidth > 0 && isFirstTime){
+                this.layoutParams.width = collapsedWidth
+                isFirstTime = false
+            }
+        }
+    }
+
+    fun setPairing(pairing: Pairing) {
+        _pairing = pairing
+
+    }
+
+    fun getPairing(): Pairing? {
+        return _pairing
     }
 
     fun addHeader(view: View) { header.addView(view) }
@@ -227,29 +246,21 @@ class PairingCard @JvmOverloads constructor(
     fun expand(animate: Boolean = true) { resize(true, animate) }
     fun collapse(animate: Boolean = true) { resize(false, animate) }
 
-    /**
-     * Stroke Color
-     */
-    fun setStrokeColor(strokeColor: Int) {
-        cardView.strokeColor = strokeColor
-    }
-    fun getStrokeColor(): Int = _strokeColor
-
-    /**
-     * Stroke Width
-     */
-    fun setStrokeWidth(strokeWidth: Int) {
-        cardView.strokeWidth = strokeWidth
-    }
-    fun getStrokeWidth(): Float = _strokeWidth
-
-    /**
-     * Elevation
-     */
-    override fun setElevation(elevation: Float) {
-        cardView.elevation = elevation
-    }
-    override fun getElevation(): Float = _cardElevation
+//    /**
+//     * Stroke Color
+//     */
+//    override fun setStrokeColor(strokeColor: Int) {
+//        cardView.strokeColor = strokeColor
+//    }
+//    override fun getStrokeColor(): Int = _strokeColor
+//
+//    /**
+//     * Stroke Width
+//     */
+//    override fun setStrokeWidth(strokeWidth: Int) {
+//        cardView.strokeWidth = strokeWidth
+//    }
+//    override fun getStrokeWidth(): Int = _strokeWidth.toInt()
 
     private fun resize(expand: Boolean, animate: Boolean) {
 
@@ -291,22 +302,22 @@ class PairingCard @JvmOverloads constructor(
 
     private fun setResizeProgress(progress: Float) {
         if (expandedHeight > 0 && collapsedHeight > 0) {
-            cardView.layoutParams.height =
+            layoutParams.height =
                     (collapsedHeight + (expandedHeight - collapsedHeight) * progress).toInt()
         }
-        cardView.layoutParams.width =
+        layoutParams.width =
             (collapsedWidth + (expandedWidth - collapsedWidth) * progress).toInt()
 
         cardContentContainer.setBackgroundColor(blendColors(collapsedBg, expandedBg, progress))
 
-        this.chevron.rotation = 90 * progress
+        chevron.rotation = 90 * progress
 
         expandView.alpha = progress
 
-        cardView.strokeColor = blendColors(Color.TRANSPARENT, _strokeColor, progress)
-        cardView.elevation = cardView.elevation * progress
+        strokeColor = blendColors(Color.TRANSPARENT, _strokeColor, progress)
+        elevation = _collapsedElevation + (_expandedElevation - _collapsedElevation) * progress
 
-        cardView.requestLayout()
+        requestLayout()
     }
 
     private fun getNewAnimator(expand: Boolean) : ValueAnimator{

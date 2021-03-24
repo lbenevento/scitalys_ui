@@ -13,7 +13,8 @@
     <style name="Widget.ScitalysComponents.PairingCard" parent="Widget.MaterialComponents.CardView">
         <item name="strokeColor">?attr/colorOnSurface</item>
         <item name="strokeWidth">1dp</item>
-        <item name="cardElevation">@dimen/cardview_default_elevation</item>
+        <item name="collapsedCardElevation">0dp</item>
+        <item name="expandedCardElevation">@dimen/cardview_default_elevation</item>
         <item name="collapsedBackgroundColor">?attr/colorOnSurface</item>
         <item name="expandedBackgroundColor">?attr/colorOnSurface</item>
         <item name="chevronTint">?attr/colorPrimary</item>

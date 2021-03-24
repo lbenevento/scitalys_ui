@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 25
         targetSdkVersion 30
-        versionCode 9
-        versionName "1.0.8"
+        versionCode 10
+        versionName "1.0.9"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -58,21 +58,23 @@ dependencies {
 
 }
 
+//Publishing
+
+apply plugin: 'maven-publish'
+
+def env = System.getenv()
+def github_usr = env["GITHUB_USR"]
+def github_key = env["GITHUB_PACKAGES_KEY"]
+
+def getVersionName = { ->
+    return android.defaultConfig.versionName
+}
+
+def getArtifactId = { ->
+    return "ui"
+}
+
 afterEvaluate {
-
-    apply plugin: 'maven-publish'
-
-    def env = System.getenv()
-    def github_usr = env["GITHUB_USR"]
-    def github_key = env["GITHUB_PACKAGES_KEY"]
-
-    def getVersionName = { ->
-        return android.defaultConfig.versionName
-    }
-
-    def getArtifactId = { ->
-        return "ui"
-    }
 
     publishing {
 
@@ -108,4 +110,8 @@ afterEvaluate {
 
     }
 
+}
+
+task deleteArtifact(type: Delete) {
+    delete "$buildDir/outputs/aar/${getArtifactId()}-release.aar"
 }

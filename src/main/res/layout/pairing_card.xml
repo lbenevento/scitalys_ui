@@ -20,11 +20,6 @@ too. layout_gravity="center_horizontal" is a lot simpler.
         <merge
             android:id="@+id/card_view">
 
-            <FrameLayout
-                android:id="@+id/card_content_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
                 <!--
                 scale_container is used to scale down the item when the scale down
                 animation happens. card_container re-sizes height and width while
@@ -35,10 +30,20 @@ too. layout_gravity="center_horizontal" is a lot simpler.
                     android:id="@+id/scale_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
                     android:paddingStart="8dp"
                     android:paddingTop="12dp"
                     android:paddingEnd="8dp"
                     android:paddingBottom="12dp">
+
+                    <View
+                        android:id="@+id/overlay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
 
                     <FrameLayout
                         android:id="@+id/chevron_container"
@@ -87,6 +92,5 @@ too. layout_gravity="center_horizontal" is a lot simpler.
                         app:layout_constraintTop_toBottomOf="@id/barrier"
                         app:layout_constraintEnd_toEndOf="parent"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </FrameLayout>
         </merge>
 </layout>

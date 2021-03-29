@@ -18,12 +18,16 @@
 
         <attr name="strokeColor" format="color|reference" />
         <attr name="strokeWidth" format="dimension" />
+
         <attr name="cardCornerRadius" format="dimension" />
+
         <attr name="collapsedCardElevation" format="dimension" />
         <attr name="expandedCardElevation" format="dimension" />
-        <attr name="collapsedBackgroundColor" format="color" />
-        <attr name="expandedBackgroundColor" format="color" />
+
         <attr name="chevronTint" format="color" />
+        <attr name="backgroundColor" format="color" />
+
+        <attr name="android:state_expanded" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="TraitChip">

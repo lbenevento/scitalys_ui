@@ -4,7 +4,10 @@ import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -17,11 +20,7 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.material.card.MaterialCardView
 import com.scitalys.bp_traits.models.Pairing
 import com.scitalys.ui.databinding.PairingCardBinding
-import com.scitalys.ui.utils.blendColors
-import com.scitalys.ui.utils.dp
-import com.scitalys.ui.utils.getColorFromAttr
-import com.scitalys.ui.utils.getValueAnimator
-
+import com.scitalys.ui.utils.*
 
 class PairingCard @JvmOverloads constructor(
     context: Context,
@@ -36,9 +35,6 @@ class PairingCard @JvmOverloads constructor(
 
     private var collapsedHeight = -1
     private var expandedHeight = -1
-
-    private val collapsedBg: Int
-    private val expandedBg: Int
 
     private val animationPlaybackSpeed = 0.8f
     private val expandDuration: Long
@@ -57,6 +53,11 @@ class PairingCard @JvmOverloads constructor(
 
     private val _strokeColor: Int
     private val _strokeWidth: Float
+
+    private val _backgroundColor: ColorStateList
+    private val _collapsedBackgroundColor: Int
+    private val _expandedBackgroundColor: Int
+
     private var _collapsedElevation: Float
     private val _expandedElevation: Float
     private val _cardCornerRadius: Float
@@ -68,7 +69,7 @@ class PairingCard @JvmOverloads constructor(
 
     private lateinit var animator: ValueAnimator
 
-    private val onSEExpandListener = object: Animator.AnimatorListener {
+    private val onSEExpandListener = object : Animator.AnimatorListener {
         override fun onAnimationStart(animation: Animator?) {
             expandView.visibility = View.VISIBLE
             _isExpanding = true
@@ -79,11 +80,11 @@ class PairingCard @JvmOverloads constructor(
             _isExpanding = false
         }
 
-        override fun onAnimationCancel(animation: Animator?) { }
-        override fun onAnimationRepeat(animation: Animator?) { }
+        override fun onAnimationCancel(animation: Animator?) {}
+        override fun onAnimationRepeat(animation: Animator?) {}
     }
 
-    private val onSECollapseListener = object: Animator.AnimatorListener {
+    private val onSECollapseListener = object : Animator.AnimatorListener {
         override fun onAnimationStart(animation: Animator?) {
             _isCollapsing = true
         }
@@ -94,18 +95,20 @@ class PairingCard @JvmOverloads constructor(
             _isCollapsing = false
         }
 
-        override fun onAnimationCancel(animation: Animator?) { }
-        override fun onAnimationRepeat(animation: Animator?) { }
+        override fun onAnimationCancel(animation: Animator?) {}
+        override fun onAnimationRepeat(animation: Animator?) {}
     }
 
     /**
      * Binding variables
      */
-    private val cardContentContainer: FrameLayout
     private val chevron: ImageView
     private val expandView: FrameLayout
     private val header: FrameLayout
     private val scaleContainer: ConstraintLayout
+
+    private val isNightMode: Boolean
+    private val bgOverlay: GradientDrawable = GradientDrawable()
 
     init {
         binding = DataBindingUtil.inflate(
@@ -114,7 +117,6 @@ class PairingCard @JvmOverloads constructor(
             this,
             true
         )
-        cardContentContainer = binding.cardContentContainer
         chevron = binding.chevron
         expandView = binding.expandView
         header = binding.header
@@ -152,20 +154,13 @@ class PairingCard @JvmOverloads constructor(
                     R.styleable.pairingCard_expandedCardElevation,
                     4f.dp
                 )
-                collapsedBg = getColor(
-                    R.styleable.pairingCard_collapsedBackgroundColor,
-                    ColorUtils.setAlphaComponent(
-                        context.getColorFromAttr(R.attr.colorOnSurface),
-                        25
-                    )
-                )
-                expandedBg = getColor(
-                    R.styleable.pairingCard_expandedBackgroundColor,
-                    ColorUtils.setAlphaComponent(
-                        context.getColorFromAttr(R.attr.colorOnSurface),
-                        25
-                    )
-                )
+                if (this.hasValue(R.styleable.pairingCard_backgroundColor)) {
+                    _backgroundColor = getColorStateList(
+                        R.styleable.pairingCard_backgroundColor
+                    )!!
+                } else {
+                    throw Resources.NotFoundException("Cannot get background color")
+                }
                 _chevronTint = getColor(
                     R.styleable.pairingCard_chevronTint,
                     ColorUtils.setAlphaComponent(
@@ -184,11 +179,26 @@ class PairingCard @JvmOverloads constructor(
 
         this.strokeColor = Color.TRANSPARENT
         this.strokeWidth = _strokeWidth.toInt()
-        this.elevation = _collapsedElevation
+        this.cardElevation = _collapsedElevation
         this.radius = _cardCornerRadius
-        this.setCardBackgroundColor(ColorStateList.valueOf(collapsedBg))
+
+        _collapsedBackgroundColor = _backgroundColor.defaultColor
+        _expandedBackgroundColor = _backgroundColor.getColorForState(
+            intArrayOf(android.R.attr.state_expanded),
+            _collapsedBackgroundColor
+        )
+        this.setCardBackgroundColor(_collapsedBackgroundColor)
+
         chevron.setColorFilter(_chevronTint)
 
+
+        isNightMode =
+            context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        if (isNightMode) {
+            bgOverlay.cornerRadius = _cardCornerRadius
+            bgOverlay.setColor(getOverlayColor(_collapsedElevation))
+            scaleContainer.background = bgOverlay
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -199,16 +209,17 @@ class PairingCard @JvmOverloads constructor(
 
         post {
             if (collapsedWidth < 0 || expandedWidth < 0) {
-                collapsedWidth = MeasureSpec.getSize(widthMeasureSpec) - 24.dp - paddingLeft - paddingRight
+                collapsedWidth =
+                    MeasureSpec.getSize(widthMeasureSpec) - 24.dp - paddingLeft - paddingRight
                 expandedWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
             }
 
             if (collapsedHeight < 0) {
                 expandView.visibility = View.GONE
-            this.measure(
-                MeasureSpec.makeMeasureSpec(collapsedWidth, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-            )
+                this.measure(
+                    MeasureSpec.makeMeasureSpec(collapsedWidth, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+                )
                 collapsedHeight = this.measuredHeight
             }
             if (expandedHeight < 0) {
@@ -221,7 +232,7 @@ class PairingCard @JvmOverloads constructor(
                 expandView.visibility = View.GONE
             }
 
-            if(collapsedWidth > 0 && expandedWidth > 0 && isFirstTime){
+            if (collapsedWidth > 0 && expandedWidth > 0 && isFirstTime) {
                 this.layoutParams.width = collapsedWidth
                 isFirstTime = false
             }
@@ -237,30 +248,36 @@ class PairingCard @JvmOverloads constructor(
         return _pairing
     }
 
-    fun addHeader(view: View) { header.addView(view) }
-    fun removeHeader() { header.removeAllViews() }
+    fun addHeader(view: View) {
+        header.addView(view)
+    }
 
-    fun addBody(view: View) { expandView.addView(view) }
-    fun removeBody() { expandView.removeAllViews() }
+    fun removeHeader() {
+        header.removeAllViews()
+    }
 
-    fun expand(animate: Boolean = true) { resize(true, animate) }
-    fun collapse(animate: Boolean = true) { resize(false, animate) }
+    fun addBody(view: View) {
+        expandView.addView(view)
+    }
 
-//    /**
-//     * Stroke Color
-//     */
-//    override fun setStrokeColor(strokeColor: Int) {
-//        cardView.strokeColor = strokeColor
-//    }
-//    override fun getStrokeColor(): Int = _strokeColor
-//
-//    /**
-//     * Stroke Width
-//     */
-//    override fun setStrokeWidth(strokeWidth: Int) {
-//        cardView.strokeWidth = strokeWidth
-//    }
-//    override fun getStrokeWidth(): Int = _strokeWidth.toInt()
+    fun removeBody() {
+        expandView.removeAllViews()
+    }
+
+    fun expand(animate: Boolean = true) {
+        resize(true, animate)
+    }
+
+    fun collapse(animate: Boolean = true) {
+        resize(false, animate)
+    }
+
+    /**
+     * BG Color
+     */
+    fun getBackgroundColorStateList(): ColorStateList {
+        return _backgroundColor
+    }
 
     private fun resize(expand: Boolean, animate: Boolean) {
 
@@ -303,24 +320,37 @@ class PairingCard @JvmOverloads constructor(
     private fun setResizeProgress(progress: Float) {
         if (expandedHeight > 0 && collapsedHeight > 0) {
             layoutParams.height =
-                    (collapsedHeight + (expandedHeight - collapsedHeight) * progress).toInt()
+                (collapsedHeight + (expandedHeight - collapsedHeight) * progress).toInt()
         }
         layoutParams.width =
             (collapsedWidth + (expandedWidth - collapsedWidth) * progress).toInt()
 
-        cardContentContainer.setBackgroundColor(blendColors(collapsedBg, expandedBg, progress))
+
+
+        this.setCardBackgroundColor(
+            blendColors(
+                _collapsedBackgroundColor,
+                _expandedBackgroundColor,
+                progress
+            )
+        )
 
         chevron.rotation = 90 * progress
 
         expandView.alpha = progress
 
         strokeColor = blendColors(Color.TRANSPARENT, _strokeColor, progress)
-        elevation = _collapsedElevation + (_expandedElevation - _collapsedElevation) * progress
+        cardElevation = _collapsedElevation + (_expandedElevation - _collapsedElevation) * progress
+
+        if (isNightMode) {
+            bgOverlay.setColor(getOverlayColor(cardElevation))
+            scaleContainer.background = bgOverlay
+        }
 
         requestLayout()
     }
 
-    private fun getNewAnimator(expand: Boolean) : ValueAnimator{
+    private fun getNewAnimator(expand: Boolean): ValueAnimator {
         animator = getValueAnimator(
             expand, expandDuration, AccelerateDecelerateInterpolator()
         ) { progress ->
@@ -341,6 +371,23 @@ class PairingCard @JvmOverloads constructor(
     private fun Animator.setOnSEForCollapse() {
         this.removeListener(onSEExpandListener)
         this.addListener(onSECollapseListener)
+    }
+
+//    private fun TypedArray.getExpandedBackgroundColor(): Color {
+//        val colorStateList = this.getColorStateList(R.styleable.pairingCard_backgroundColor)
+//            ?: throw Resources.NotFoundException("Could not load background colors for PairingCard.")
+//
+//
+//    }
+
+    private fun getOverlayColor(elevation: Float): Int {
+
+        val onSurface = Color.WHITE
+
+        val alpha: Float = getOverlayAlpha(elevation)
+        println(alpha)
+        return ColorUtils.setAlphaComponent(onSurface, (alpha * 255f).toInt())
+
     }
 
 }

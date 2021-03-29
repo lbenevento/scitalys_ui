@@ -15,8 +15,7 @@
         <item name="strokeWidth">1dp</item>
         <item name="collapsedCardElevation">0dp</item>
         <item name="expandedCardElevation">@dimen/cardview_default_elevation</item>
-        <item name="collapsedBackgroundColor">?attr/colorOnSurface</item>
-        <item name="expandedBackgroundColor">?attr/colorOnSurface</item>
+        <item name="backgroundColor">@color/sc_pairingcard_bg</item>
         <item name="chevronTint">?attr/colorPrimary</item>
     </style>
 

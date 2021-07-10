@@ -10,7 +10,7 @@ too. layout_gravity="center_horizontal" is a lot simpler.
 
         <import type="java.util.Set" />
 
-        <import type="com.scitalys.bp_traits.models.Speciment" />
+        <import type="com.scitalys.bp_traits.models.Specimen" />
 
         <variable
             name="pairing"

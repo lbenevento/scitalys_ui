@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="chevron_content_description">Expand arrow</string>
+    <string name="specimen_colon">"Specimens: "</string>
+    <string name="traits_colon">"Traits: "</string>
+    <string name="hetProbability" translatable="false">%1$d%% %2$s</string>
+    <string name="no_specimen_found">No specimen found.</string>
 </resources>

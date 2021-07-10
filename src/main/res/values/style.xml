@@ -34,6 +34,8 @@
         <!-- Paddings, start and end padding are already supported by the super class. -->
         <item name="chipTopPadding">0dp</item>
         <item name="chipBottomPadding">0dp</item>
+
+        <item name="chipElevation">1dp</item>
     </style>
 
 </resources>

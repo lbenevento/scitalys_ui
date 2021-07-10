@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
 import com.google.android.material.chip.Chip
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.scitalys.bp_traits.Trait
+import com.scitalys.ui.utils.dp
 
 class TraitChip @JvmOverloads constructor(
     context: Context,
@@ -28,6 +30,9 @@ class TraitChip @JvmOverloads constructor(
 
     private var chipTopPadding: Float
     private var chipBottomPadding: Float
+
+    private var _elevation: Float
+    private val bgDrawable: MaterialShapeDrawable
 
     init {
         context.theme.obtainStyledAttributes(
@@ -85,6 +90,10 @@ class TraitChip @JvmOverloads constructor(
                     R.styleable.TraitChip_chipBottomPadding,
                     0F
                 )
+                _elevation = getDimension(
+                    R.styleable.TraitChip_chipElevation,
+                    1f.dp
+                )
             } finally {
                 recycle()
             }
@@ -92,6 +101,10 @@ class TraitChip @JvmOverloads constructor(
         trait?.let {
             setupChip(it)
         }
+
+        bgDrawable = MaterialShapeDrawable()
+        background = bgDrawable
+        bgDrawable.elevation = _elevation
     }
 
     fun setTrait(_trait: Trait) {
@@ -101,6 +114,11 @@ class TraitChip @JvmOverloads constructor(
 
     fun getTrait(): Trait? {
         return trait
+    }
+
+    override fun setElevation(elevation: Float) {
+        super.setElevation(elevation)
+        _elevation = elevation
     }
 
     private fun setupChip(_trait: Trait) {
@@ -159,7 +177,8 @@ class TraitChip @JvmOverloads constructor(
             textColor = this.codominantText
         }
 
-        this.chipBackgroundColor = bgColor
+//        this.chipBackgroundColor = bgColor
+        this.background = bgDrawable
         this.chipStrokeColor = strokeColor
         this.setTextColor(textColor)
 

@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.text.*
 import android.util.AttributeSet
-import android.view.*
+import android.util.Log
+import android.view.Gravity
+import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.widget.Filterable
 import android.widget.ListAdapter
@@ -81,6 +83,7 @@ class MorphInputText @JvmOverloads constructor(
                 recycle()
             }
         }
+
     }
 
     override fun onAttachedToWindow() {
@@ -117,9 +120,10 @@ class MorphInputText @JvmOverloads constructor(
         adapter?.let {
             for (i in 0 until adapter.count) {
 
-                val chip = adapter.getItem(i).toString()
-
-                _allowedChipStrings.add(chip)
+                val item = adapter.getItem(i)
+                if (item != null) {
+                    _allowedChipStrings.add(item.toString())
+                }
             }
         }
         super.setAdapter(adapter)
@@ -176,7 +180,7 @@ class MorphInputText @JvmOverloads constructor(
                 )
                 if (totalMutations.size == 2) {
                     joinedTrait = Trait.fromValue(totalMutations[0], totalMutations[1])
-                    if (joinedTrait != null){
+                    if (joinedTrait != null) {
                         chipToBeRemoved = chip
                         break
                     }

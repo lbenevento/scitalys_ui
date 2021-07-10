@@ -45,5 +45,11 @@
         <!-- Paddings attrs, start and end paddings are already supported by super class. -->
         <attr name="chipTopPadding" format="dimension" />
         <attr name="chipBottomPadding" format="dimension" />
+
+        <attr name="chipElevation" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="ExpandableActionMenu">
+        <attr name="menu" format="reference" />
     </declare-styleable>
 </resources>

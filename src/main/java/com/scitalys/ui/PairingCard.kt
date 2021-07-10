@@ -18,6 +18,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.scitalys.bp_traits.models.Pairing
 import com.scitalys.ui.databinding.PairingCardBinding
 import com.scitalys.ui.utils.*
@@ -194,11 +195,11 @@ class PairingCard @JvmOverloads constructor(
 
         isNightMode =
             context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-        if (isNightMode) {
-            bgOverlay.cornerRadius = _cardCornerRadius
-            bgOverlay.setColor(getOverlayColor(_collapsedElevation))
-            scaleContainer.background = bgOverlay
-        }
+//        if (isNightMode) {
+//            bgOverlay.cornerRadius = _cardCornerRadius
+//            bgOverlay.setColor(getOverlayColor(_collapsedElevation))
+//            scaleContainer.background = bgOverlay
+//        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -327,13 +328,15 @@ class PairingCard @JvmOverloads constructor(
 
 
 
-        this.setCardBackgroundColor(
-            blendColors(
-                _collapsedBackgroundColor,
-                _expandedBackgroundColor,
-                progress
+        if (_collapsedBackgroundColor != _expandedBackgroundColor) {
+            setCardBackgroundColor(
+                blendColors(
+                    _collapsedBackgroundColor,
+                    _expandedBackgroundColor,
+                    progress
+                )
             )
-        )
+        }
 
         chevron.rotation = 90 * progress
 
@@ -342,10 +345,10 @@ class PairingCard @JvmOverloads constructor(
         strokeColor = blendColors(Color.TRANSPARENT, _strokeColor, progress)
         cardElevation = _collapsedElevation + (_expandedElevation - _collapsedElevation) * progress
 
-        if (isNightMode) {
-            bgOverlay.setColor(getOverlayColor(cardElevation))
-            scaleContainer.background = bgOverlay
-        }
+//        if (isNightMode) {
+//            bgOverlay.setColor(getOverlayColor(cardElevation))
+//            scaleContainer.background = bgOverlay
+//        }
 
         requestLayout()
     }

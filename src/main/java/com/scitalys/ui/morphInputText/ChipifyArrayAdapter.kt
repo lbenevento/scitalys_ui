@@ -50,17 +50,30 @@ class ChipifyArrayAdapter(
     lateinit var filter: ArrayFilter
 
 
-
     /**
      * Total count is the sum of specimens.size and traits.size.
      */
     override fun getCount(): Int = objects.specimens.size + objects.traits.size + 2
 
     override fun getItem(position: Int): String? {
+        // Define positions
+        val specimensTitlePosition: Int
+        val specimensPositions: IntRange
+        val traitsTitlePosition: Int
+
+        if (isSpecimensSectionEnabled) {
+            specimensTitlePosition = 0
+            specimensPositions = 1..objects.specimens.size
+            traitsTitlePosition = objects.specimens.size + 1
+        } else {
+            specimensTitlePosition = -1
+            specimensPositions = -1..-1
+            traitsTitlePosition = 0
+        }
         return when (position) {
-            0 -> null
-            in 0..objects.specimens.size ->
-            {
+            specimensTitlePosition -> null
+            traitsTitlePosition -> null
+            in specimensPositions -> {
                 val traitsList = objects.specimens[position - 1].traits.keys.toList()
                 var string = ""
                 traitsList.forEachIndexed { index, trait ->
@@ -72,10 +85,16 @@ class ChipifyArrayAdapter(
                 }
                 return string
             }
-            objects.specimens.size + 1 -> null
-            else ->
-            {
-                objects.traits[position - 2 - objects.specimens.size].formattedString
+            else -> {
+                // If specimensSection is enabled it subtract objects.specimens.size + 2 from position.
+                // + 2 is because there are two section titles.
+                // Else it just subtract one to it because there is only one title.
+                val traitsIndex = if (isSpecimensSectionEnabled) {
+                    position - objects.specimens.size - 2
+                } else {
+                    position - 1
+                }
+                objects.traits[traitsIndex].formattedString
             }
         }
     }
@@ -299,7 +318,8 @@ class ChipifyArrayAdapter(
         }
 
         override fun publishResults(constraint: CharSequence?, results: FilterResults) {
-            objects = (results.values ?: ChipifyArrayObject(listOf(), listOf())) as ChipifyArrayObject
+            objects =
+                (results.values ?: ChipifyArrayObject(listOf(), listOf())) as ChipifyArrayObject
             if (results.count > 0) {
                 notifyDataSetChanged()
             } else {

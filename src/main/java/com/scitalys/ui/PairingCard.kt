@@ -18,8 +18,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.shape.MaterialShapeDrawable
-import com.scitalys.bp_traits.models.Pairing
+import com.scitalys.bp_traits.Pairing
 import com.scitalys.ui.databinding.PairingCardBinding
 import com.scitalys.ui.utils.*
 

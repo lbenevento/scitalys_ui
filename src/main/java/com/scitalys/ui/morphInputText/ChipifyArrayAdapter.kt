@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.chip.ChipGroup
 import com.scitalys.bp_traits.Trait
-import com.scitalys.bp_traits.models.Specimen
+import com.scitalys.bp_traits.Specimen
 import com.scitalys.ui.R
 import com.scitalys.ui.utils.createChipFromTrait
 import com.scitalys.ui.utils.dp

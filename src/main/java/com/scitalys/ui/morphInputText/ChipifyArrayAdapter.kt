@@ -53,7 +53,13 @@ class ChipifyArrayAdapter(
     /**
      * Total count is the sum of specimens.size and traits.size.
      */
-    override fun getCount(): Int = objects.specimens.size + objects.traits.size + 2
+    override fun getCount(): Int {
+        return if (isSpecimensSectionEnabled) {
+            objects.specimens.size + objects.traits.size + 2
+        } else {
+            objects.traits.size + 1
+        }
+    }
 
     override fun getItem(position: Int): String? {
         // Define positions

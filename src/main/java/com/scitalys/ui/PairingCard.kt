@@ -1,395 +1,253 @@
 package com.scitalys.ui
 
-import android.animation.Animator
-import android.animation.ValueAnimator
-import android.content.Context
-import android.content.res.ColorStateList
-import android.content.res.Configuration
-import android.content.res.Resources
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
-import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.FrameLayout
-import android.widget.ImageView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.graphics.ColorUtils
-import androidx.databinding.DataBindingUtil
-import com.google.android.material.card.MaterialCardView
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.scitalys.android.ballscalculator.ui.theme.ScitalysTheme
 import com.scitalys.bp_traits.Pairing
-import com.scitalys.ui.databinding.PairingCardBinding
-import com.scitalys.ui.utils.*
+import com.scitalys.bp_traits.Specimen
+import com.scitalys.bp_traits.Trait
 
-class PairingCard @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = R.attr.pairingCardStyle
-) : MaterialCardView(context, attrs, defStyleAttr) {
-
-    private val binding: PairingCardBinding
-
-    private var collapsedWidth = -1
-    private var expandedWidth = -1
-
-    private var collapsedHeight = -1
-    private var expandedHeight = -1
-
-    private val animationPlaybackSpeed = 0.8f
-    private val expandDuration: Long
-        get() = (300L / animationPlaybackSpeed).toLong()
-
-    private var _isExpanded = false
-    val isExpanded: Boolean
-        get() = _isExpanded
-
-    private var _isExpanding = false
-    val isExpanding: Boolean
-        get() = _isExpanding
-    private var _isCollapsing = true
-    val isCollapsing: Boolean
-        get() = _isCollapsing
-
-    private val _strokeColor: Int
-    private val _strokeWidth: Float
-
-    private val _backgroundColor: ColorStateList
-    private val _collapsedBackgroundColor: Int
-    private val _expandedBackgroundColor: Int
-
-    private var _collapsedElevation: Float
-    private val _expandedElevation: Float
-    private val _cardCornerRadius: Float
-    private val _chevronTint: Int
-
-    private var isFirstTime = true
-
-    private var _pairing: Pairing? = null
-
-    private lateinit var animator: ValueAnimator
-
-    private val onSEExpandListener = object : Animator.AnimatorListener {
-        override fun onAnimationStart(animation: Animator?) {
-            expandView.visibility = View.VISIBLE
-            _isExpanding = true
-        }
-
-        override fun onAnimationEnd(animation: Animator?) {
-            _isExpanded = true
-            _isExpanding = false
-        }
-
-        override fun onAnimationCancel(animation: Animator?) {}
-        override fun onAnimationRepeat(animation: Animator?) {}
-    }
-
-    private val onSECollapseListener = object : Animator.AnimatorListener {
-        override fun onAnimationStart(animation: Animator?) {
-            _isCollapsing = true
-        }
-
-        override fun onAnimationEnd(animation: Animator?) {
-            expandView.visibility = View.GONE
-            _isExpanded = false
-            _isCollapsing = false
-        }
-
-        override fun onAnimationCancel(animation: Animator?) {}
-        override fun onAnimationRepeat(animation: Animator?) {}
-    }
-
-    /**
-     * Binding variables
-     */
-    private val chevron: ImageView
-    private val expandView: FrameLayout
-    private val header: FrameLayout
-    private val scaleContainer: ConstraintLayout
-
-    private val isNightMode: Boolean
-    private val bgOverlay: GradientDrawable = GradientDrawable()
-
-    init {
-        binding = DataBindingUtil.inflate(
-            LayoutInflater.from(context),
-            R.layout.pairing_card,
-            this,
-            true
-        )
-        chevron = binding.chevron
-        expandView = binding.expandView
-        header = binding.header
-        scaleContainer = binding.scaleContainer
-
-        /**
-         * Get Styled Attributes
-         */
-        context.theme.obtainStyledAttributes(
-            attrs,
-            R.styleable.pairingCard,
-            defStyleAttr, R.style.Widget_ScitalysComponents_PairingCard
-        ).apply {
-            try {
-                _strokeColor = getColor(
-                    R.styleable.pairingCard_strokeColor,
-                    ColorUtils.setAlphaComponent(
-                        context.getColorFromAttr(R.attr.colorOnSurface),
-                        196
-                    )
-                )
-                _strokeWidth = getDimension(
-                    R.styleable.pairingCard_strokeWidth,
-                    1f.dp
-                )
-                _cardCornerRadius = getDimension(
-                    R.styleable.pairingCard_cardCornerRadius,
-                    4f.dp
-                )
-                _collapsedElevation = getDimension(
-                    R.styleable.pairingCard_collapsedCardElevation,
-                    1f.dp
-                )
-                _expandedElevation = getDimension(
-                    R.styleable.pairingCard_expandedCardElevation,
-                    4f.dp
-                )
-                if (this.hasValue(R.styleable.pairingCard_backgroundColor)) {
-                    _backgroundColor = getColorStateList(
-                        R.styleable.pairingCard_backgroundColor
-                    )!!
-                } else {
-                    throw Resources.NotFoundException("Cannot get background color")
-                }
-                _chevronTint = getColor(
-                    R.styleable.pairingCard_chevronTint,
-                    ColorUtils.setAlphaComponent(
-                        context.getColorFromAttr(R.attr.colorOnSurface),
-                        200
-                    )
-                )
-            } finally {
-                recycle()
-            }
-        }
-
-        /**
-         * Set retrieved styled attributes
-         */
-
-        this.strokeColor = Color.TRANSPARENT
-        this.strokeWidth = _strokeWidth.toInt()
-        this.cardElevation = _collapsedElevation
-        this.radius = _cardCornerRadius
-
-        _collapsedBackgroundColor = _backgroundColor.defaultColor
-        _expandedBackgroundColor = _backgroundColor.getColorForState(
-            intArrayOf(android.R.attr.state_expanded),
-            _collapsedBackgroundColor
-        )
-        this.setCardBackgroundColor(_collapsedBackgroundColor)
-
-        chevron.setColorFilter(_chevronTint)
-
-
-        isNightMode =
-            context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-//        if (isNightMode) {
-//            bgOverlay.cornerRadius = _cardCornerRadius
-//            bgOverlay.setColor(getOverlayColor(_collapsedElevation))
-//            scaleContainer.background = bgOverlay
-//        }
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(
-            widthMeasureSpec,
-            heightMeasureSpec
-        )
-
-        post {
-            if (collapsedWidth < 0 || expandedWidth < 0) {
-                collapsedWidth =
-                    MeasureSpec.getSize(widthMeasureSpec) - 24.dp - paddingLeft - paddingRight
-                expandedWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
-            }
-
-            if (collapsedHeight < 0) {
-                expandView.visibility = View.GONE
-                this.measure(
-                    MeasureSpec.makeMeasureSpec(collapsedWidth, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-                )
-                collapsedHeight = this.measuredHeight
-            }
-            if (expandedHeight < 0) {
-                expandView.visibility = View.VISIBLE
-                expandView.measure(
-                    MeasureSpec.makeMeasureSpec(scaleContainer.measuredWidth, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-                )
-                expandedHeight = collapsedHeight + expandView.measuredHeight
-                expandView.visibility = View.GONE
-            }
-
-            if (collapsedWidth > 0 && expandedWidth > 0 && isFirstTime) {
-                this.layoutParams.width = collapsedWidth
-                isFirstTime = false
-            }
-        }
-    }
-
-    fun setPairing(pairing: Pairing) {
-        _pairing = pairing
-
-    }
-
-    fun getPairing(): Pairing? {
-        return _pairing
-    }
-
-    fun addHeader(view: View) {
-        header.addView(view)
-    }
-
-    fun removeHeader() {
-        header.removeAllViews()
-    }
-
-    fun addBody(view: View) {
-        expandView.addView(view)
-    }
-
-    fun removeBody() {
-        expandView.removeAllViews()
-    }
-
-    fun expand(animate: Boolean = true) {
-        resize(true, animate)
-    }
-
-    fun collapse(animate: Boolean = true) {
-        resize(false, animate)
-    }
-
-    /**
-     * BG Color
-     */
-    fun getBackgroundColorStateList(): ColorStateList {
-        return _backgroundColor
-    }
-
-    private fun resize(expand: Boolean, animate: Boolean) {
-
-        if (animate) {
-            if (::animator.isInitialized) {
-                if (animator.isRunning) {
-                    // Should be expanded, so reverse the animation if it is collapsing
-                    if (expand && _isCollapsing) {
-                        animator.setOnSEForExpand()
-                    }
-                    // Should be collapsed, so reverse the animation if it is expanding
-                    else if (!expand && _isExpanding) {
-                        animator.setOnSEForCollapse()
-                    }
-                    animator.reverse()
-                } else {
-                    // Should be expanded, so set proper onStart, onEnd and float values
-                    if (expand && !_isExpanded) {
-                        animator.setFloatValues(0f, 1f)
-                        animator.setOnSEForExpand()
-                    }
-                    // Should be collapsed, se set proper onStart, onEnd and float values
-                    else if (!expand && _isExpanded) {
-                        animator.setFloatValues(1f, 0f)
-                        animator.setOnSEForCollapse()
-                    }
-                    animator.start()
-                }
-            } else {
-                animator = getNewAnimator(expand)
-                animator.start()
-            }
-        } else {
-            expandView.visibility =
-                if (expand && expandedHeight >= 0) View.VISIBLE else View.GONE
-            setResizeProgress(if (expand) 1f else 0f)
-        }
-    }
-
-    private fun setResizeProgress(progress: Float) {
-        if (expandedHeight > 0 && collapsedHeight > 0) {
-            layoutParams.height =
-                (collapsedHeight + (expandedHeight - collapsedHeight) * progress).toInt()
-        }
-        layoutParams.width =
-            (collapsedWidth + (expandedWidth - collapsedWidth) * progress).toInt()
-
-
-
-        if (_collapsedBackgroundColor != _expandedBackgroundColor) {
-            setCardBackgroundColor(
-                blendColors(
-                    _collapsedBackgroundColor,
-                    _expandedBackgroundColor,
-                    progress
-                )
+@ExperimentalMaterialApi
+@ExperimentalAnimationApi
+@Composable
+fun PairingCard(
+    pairing: Pairing,
+    modifier: Modifier = Modifier,
+    pairingCardState: PairingCardState,
+    onExpandClick: (state: PairingCardState) -> Unit,
+    elevation: Dp = 4.dp,
+    borderWidth: Dp = 1.dp,
+    onChipClick: (trait: Trait) -> Unit
+) {
+    val transition = updateTransition(
+        targetState = pairingCardState,
+        label = "Pairing Card Transition"
+    )
+    val cardPadding by transition.animateDp(
+        label = "Padding Animation",
+        transitionSpec = {
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessMedium
             )
         }
-
-        chevron.rotation = 90 * progress
-
-        expandView.alpha = progress
-
-        strokeColor = blendColors(Color.TRANSPARENT, _strokeColor, progress)
-        cardElevation = _collapsedElevation + (_expandedElevation - _collapsedElevation) * progress
-
-//        if (isNightMode) {
-//            bgOverlay.setColor(getOverlayColor(cardElevation))
-//            scaleContainer.background = bgOverlay
-//        }
-
-        requestLayout()
-    }
-
-    private fun getNewAnimator(expand: Boolean): ValueAnimator {
-        animator = getValueAnimator(
-            expand, expandDuration, AccelerateDecelerateInterpolator()
-        ) { progress ->
-            setResizeProgress(progress)
+    ) { state ->
+        when (state) {
+            PairingCardState.Collapsed -> 12.dp
+            PairingCardState.Expanded -> 2.dp
         }
-
-        if (expand) animator.setOnSEForExpand()
-        else animator.setOnSEForCollapse()
-
-        return animator
+    }
+    val cardElevation by transition.animateDp(label = "Elevation Animation") { state ->
+        when (state) {
+            PairingCardState.Collapsed -> 0.dp
+            PairingCardState.Expanded -> elevation
+        }
+    }
+    val strokeWidth by transition.animateDp(label = "Stroke Width Animation") { state ->
+        when (state) {
+            PairingCardState.Collapsed -> 0.dp
+            PairingCardState.Expanded -> borderWidth
+        }
+    }
+    val chevronRotation by transition.animateFloat(
+        label = "Chevron Animation",
+        transitionSpec = {
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessMedium
+            )
+        }
+    ) { state ->
+        when (state) {
+            PairingCardState.Collapsed -> 0f
+            PairingCardState.Expanded -> 90f
+        }
     }
 
-    private fun Animator.setOnSEForExpand() {
-        this.removeListener(onSECollapseListener)
-        this.addListener(onSEExpandListener)
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        border = BorderStroke(strokeWidth, MaterialTheme.colors.primaryVariant),
+        modifier = modifier
+            .padding(horizontal = cardPadding.coerceAtLeast(0.dp))
+            .shadow(
+                elevation = cardElevation,
+                shape = RoundedCornerShape(20.dp),
+                clip = cardElevation == 0.dp
+            )
+            .clip(RoundedCornerShape(20.dp))
+            .clickable { onExpandClick(pairingCardState) }
+            .animateContentSize(
+                animationSpec = spring()
+            )
+    ) {
+        Column(modifier = Modifier.padding(10.dp)) {
+            Header(
+                male = pairing.male,
+                female = pairing.female,
+                chevronRotation = chevronRotation,
+                onChipClick = onChipClick
+            )
+            if (pairingCardState == PairingCardState.Expanded) {
+                Body(
+                    offspring = pairing.offspringMap,
+                    oddsOutOf = pairing.totalPossibilities,
+                    onChipClick = onChipClick
+                )
+            }
+        }
     }
+    Spacer(modifier = Modifier.height(10.dp))
+}
 
-    private fun Animator.setOnSEForCollapse() {
-        this.removeListener(onSEExpandListener)
-        this.addListener(onSECollapseListener)
+@ExperimentalMaterialApi
+@Composable
+fun Body(
+    offspring: Map<Specimen, Int>,
+    oddsOutOf: Int,
+    onChipClick: (trait: Trait) -> Unit
+) {
+    Column {
+        Spacer(Modifier.height(15.dp))
+
+        val lastPosition = offspring.size - 1
+        var currentPosition = 0
+
+        offspring.forEach {
+            Row {
+                val (specimen, incidence) = it
+                Text(
+                    text = stringResource(id = R.string.fraction)
+                        .format(incidence, oddsOutOf),
+                    color = MaterialTheme.colors.primaryVariant,
+                    modifier = Modifier.width(34.dp)
+                )
+                SpecimenRow(
+                    specimen = specimen,
+                    strokeWidth = 0.dp,
+                    onChipClick = onChipClick
+                )
+            }
+            // Add spacer only if it is not the last specimen in the list.
+            if (currentPosition != lastPosition) {
+                Spacer(Modifier.height(5.dp))
+            }
+            currentPosition++
+        }
     }
+}
 
-//    private fun TypedArray.getExpandedBackgroundColor(): Color {
-//        val colorStateList = this.getColorStateList(R.styleable.pairingCard_backgroundColor)
-//            ?: throw Resources.NotFoundException("Could not load background colors for PairingCard.")
-//
-//
-//    }
-
-    private fun getOverlayColor(elevation: Float): Int {
-
-        val onSurface = Color.WHITE
-
-        val alpha: Float = getOverlayAlpha(elevation)
-        println(alpha)
-        return ColorUtils.setAlphaComponent(onSurface, (alpha * 255f).toInt())
-
+@ExperimentalMaterialApi
+@Composable
+private fun Header(
+    male: Specimen,
+    female: Specimen,
+    chevronRotation: Float,
+    onChipClick: (trait: Trait) -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_chevron_right),
+            contentDescription = "See offspring arrow.",
+            tint = MaterialTheme.colors.primaryVariant,
+            modifier = Modifier
+                .padding(end = 10.dp)
+                .rotate(chevronRotation)
+        )
+        Column {
+            SpecimenRow(
+                specimen = male,
+                onChipClick = onChipClick
+            )
+            Spacer(Modifier.height(5.dp))
+            SpecimenRow(
+                specimen = female,
+                onChipClick = onChipClick
+            )
+        }
     }
+}
 
+@ExperimentalMaterialApi
+@Composable
+private fun SpecimenRow(
+    specimen: Specimen,
+    strokeWidth: Dp = 1.dp,
+    onChipClick: (trait: Trait) -> Unit
+) {
+    Row {
+        specimen.traits.keys.forEach { trait ->
+            TraitChip(
+                trait = trait,
+                strokeWidth = strokeWidth,
+                modifier = Modifier
+                    .padding(end = 5.dp),
+                onChipClick = onChipClick
+            )
+        }
+    }
+}
+
+enum class PairingCardState {
+    Collapsed,
+    Expanded
+}
+
+@ExperimentalMaterialApi
+@ExperimentalAnimationApi
+@Preview
+@Composable
+fun PairingCardPreview() {
+
+    val pairing = Pairing(
+        male = Specimen(
+            traits = mutableMapOf(
+                Pair(Trait.ENCHI, 1f),
+                Pair(Trait.SUPER_PASTEL, 1f)
+            )
+        ),
+        female = Specimen(
+            traits = mutableMapOf(
+                Pair(Trait.SUPER_CYPRESS, 1f),
+                Pair(Trait.PIED, 1f)
+            )
+        )
+    )
+
+    ScitalysTheme {
+        var state by remember {
+            mutableStateOf(PairingCardState.Collapsed)
+        }
+        PairingCard(
+            pairing,
+            pairingCardState = state,
+            onExpandClick = {
+                state = when (it) {
+                    PairingCardState.Expanded -> PairingCardState.Collapsed
+                    PairingCardState.Collapsed -> PairingCardState.Expanded
+                }
+            },
+            onChipClick = {},
+        )
+    }
 }

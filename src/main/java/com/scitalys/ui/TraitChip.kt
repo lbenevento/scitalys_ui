@@ -1,223 +1,134 @@
 package com.scitalys.ui
 
-import android.content.Context
-import android.content.res.ColorStateList
-import android.util.AttributeSet
-import com.google.android.material.chip.Chip
-import com.google.android.material.shape.MaterialShapeDrawable
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.scitalys.android.ballscalculator.ui.theme.ScitalysTheme
+import com.scitalys.ui.theme.*
 import com.scitalys.bp_traits.Trait
-import com.scitalys.ui.utils.dp
+import com.scitalys.bp_traits.isHetRecessive
+import com.scitalys.bp_traits.isHomoCodominant
+import com.scitalys.bp_traits.isHomoRecessive
 
-class TraitChip @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = R.attr.traitChipStyle
-) : Chip(context, attrs, defStyleAttr) {
-
-    private var trait: Trait? = null
-
-    private var codominantBG: Int
-    private var codominantText: Int
-    private var codominantStroke: Int
-
-    private var recessiveBG: Int
-    private var recessiveText: Int
-    private var recessiveStroke: Int
-
-    private var coallelicBG: Int
-    private var coallelicText: Int
-    private var coallelicStroke: Int
-
-    private var chipTopPadding: Float
-    private var chipBottomPadding: Float
-
-    private var _elevation: Float
-    private val bgDrawable: MaterialShapeDrawable
-
-    init {
-        context.theme.obtainStyledAttributes(
-            attrs,
-            R.styleable.TraitChip,
-            defStyleAttr, R.style.Widget_ScitalysComponents_TraiChip
-        ).apply {
-            try {
-                codominantBG = getColor(
-                    R.styleable.TraitChip_colorCodominantBackground,
-                    0
-                )
-                codominantText = getColor(
-                    R.styleable.TraitChip_colorCodominantText,
-                    0
-                )
-                codominantStroke = getColor(
-                    R.styleable.TraitChip_colorCodominantStroke,
-                    0
-                )
-
-                recessiveBG = getColor(
-                    R.styleable.TraitChip_colorRecessiveBackground,
-                    0
-                )
-                recessiveText = getColor(
-                    R.styleable.TraitChip_colorRecessiveText,
-                    0
-                )
-                recessiveStroke = getColor(
-                    R.styleable.TraitChip_colorRecessiveStroke,
-                    0
-                )
-
-                coallelicBG = getColor(
-                    R.styleable.TraitChip_colorCoallelicBackground,
-                    0
-                )
-                coallelicText = getColor(
-                    R.styleable.TraitChip_colorCoallelicText,
-                    0
-                )
-                coallelicStroke = getColor(
-                    R.styleable.TraitChip_colorCoallelicStroke,
-                    0
-                )
-                /**
-                 * Paddings
-                 */
-                chipTopPadding = getDimension(
-                    R.styleable.TraitChip_chipTopPadding,
-                    0F
-                )
-                chipBottomPadding = getDimension(
-                    R.styleable.TraitChip_chipBottomPadding,
-                    0F
-                )
-                _elevation = getDimension(
-                    R.styleable.TraitChip_chipElevation,
-                    1f.dp
-                )
-            } finally {
-                recycle()
-            }
+@ExperimentalMaterialApi
+@Composable
+fun TraitChip(
+    trait: Trait,
+    modifier: Modifier = Modifier,
+    strokeWidth: Dp = 1.dp,
+    fontSize: TextUnit = 14.sp,
+    textPadding: PaddingValues = PaddingValues(
+        start = 6.dp,
+        top = 1.dp,
+        end = 6.dp,
+        bottom = 1.dp
+    ),
+    onChipClick: (trait: Trait) -> Unit = { }
+) {
+    val colors = if (isSystemInDarkTheme()) {
+        if (trait.isHetRecessive()) {
+            darkChipColors.recessiveHet
+        } else if (trait.isHomoCodominant() || trait.isHomoRecessive()) {
+            darkChipColors.coallelic
+        } else {
+            darkChipColors.codominant
         }
-        trait?.let {
-            setupChip(it)
+    } else {
+        if (trait.isHetRecessive()) {
+            lightChipsColors.recessiveHet
+        } else if (trait.isHomoCodominant() || trait.isHomoRecessive()) {
+            lightChipsColors.coallelic
+        } else {
+            lightChipsColors.codominant
         }
-
-        bgDrawable = MaterialShapeDrawable()
-        background = bgDrawable
-        bgDrawable.elevation = _elevation
     }
 
-    fun setTrait(_trait: Trait) {
-        trait = _trait
-        setupChip(_trait)
-    }
-
-    fun getTrait(): Trait? {
-        return trait
-    }
-
-    override fun setElevation(elevation: Float) {
-        super.setElevation(elevation)
-        _elevation = elevation
-    }
-
-    private fun setupChip(_trait: Trait) {
-        this.text = _trait.formattedString
-
-        val bgColor: ColorStateList
-        val strokeColor: ColorStateList
-        val textColor: Int
-
-//        when (_trait.geneType) {
-//            GeneType.CODOMINANT -> {
-//                bgColor = ColorStateList.valueOf(this.codominantBG)
-//                strokeColor = ColorStateList.valueOf(codominantStroke)
-//                textColor = this.codominantBG
-//            }
-//            GeneType.DOMINANT -> {
-//                bgColor = ColorStateList.valueOf(this.codominantBG)
-//                strokeColor = ColorStateList.valueOf(codominantStroke)
-//                textColor = this.codominantBG
-//            }
-//            GeneType.RECESSIVE -> {
-//                bgColor = ColorStateList.valueOf(recessiveBG)
-//                strokeColor = ColorStateList.valueOf(recessiveStroke)
-//                textColor = this.recessiveStroke
-//            }
-//            GeneType.COALLELIC -> {
-//                bgColor = ColorStateList.valueOf(this.coallelicBG)
-//                strokeColor = ColorStateList.valueOf(coallelicStroke)
-//                textColor = this.coallelicText
-//            }
-//            else -> throw IllegalStateException("geneType cannot be ${_trait.geneType}")
-//        }
-
-        /**
-         * Super
-         */
-        if (_trait.geneLG1 != null && _trait.geneLG2 != null) {
-            bgColor = ColorStateList.valueOf(this.coallelicBG)
-            strokeColor = ColorStateList.valueOf(coallelicStroke)
-            textColor = this.coallelicText
-        }
-        /**
-         * Het
-         */
-        else if (_trait.geneLG1 == null && _trait.geneLG2 != null) {
-            bgColor = ColorStateList.valueOf(recessiveBG)
-            strokeColor = ColorStateList.valueOf(recessiveStroke)
-            textColor = this.recessiveText
-        }
-        /**
-         * Codom
-         */
-        else {
-            bgColor = ColorStateList.valueOf(this.codominantBG)
-            strokeColor = ColorStateList.valueOf(codominantStroke)
-            textColor = this.codominantText
-        }
-
-//        this.chipBackgroundColor = bgColor
-        this.background = bgDrawable
-        this.chipStrokeColor = strokeColor
-        this.setTextColor(textColor)
-
-//        chip.setEnsureMinTouchTargetSize(false)
-
-        /**
-         * Paddings
-         */
-        val paddingTop = paddingTop + chipTopPadding
-        val paddingBottom = paddingBottom + chipBottomPadding
-
-        /**
-         * Support for RTL languages.
-         */
-//        val config = resources.configuration
-//        if (config.layoutDirection == View.LAYOUT_DIRECTION_LTR) {
-//            paddingLeft = chipStartPadding
-//            paddingRight = chipEndPadding
-//        } else {
-//            paddingLeft = chipEndPadding
-//            paddingRight = chipStartPadding
-//        }
-
-        this.setPadding(
-            paddingLeft,
-            paddingTop.toInt(),
-            paddingRight,
-            paddingBottom.toInt(),
+    Surface(
+        modifier = modifier,
+        elevation = 2.dp,
+        shape = RoundedCornerShape(50),
+        color = colors.background,
+        border = BorderStroke(
+            width = strokeWidth,
+            color = colors.border
+        ),
+        onClick = { onChipClick(trait) }
+    ) {
+        Text(
+            text = trait.formattedString,
+            fontSize = fontSize,
+            style = MaterialTheme.typography.subtitle2,
+            color = colors.text,
+            modifier = Modifier.padding(textPadding)
         )
+    }
+}
 
-//        chip.textStartPadding = 15f
-//        chip.textEndPadding = 15f
-//        chip.chipEndPadding = 0f
-//        chip.chipStartPadding = 0f
-//        chip.textAlignment = TEXT_ALIGNMENT_CENTER
-//
-//        chip.minWidth = 0
-//
-//        chip.minHeight = 0
-//        chip.chipMinHeight = 0f
+@ExperimentalMaterialApi
+@Preview(name = "TraitChip ꞏ Codominant ꞏ Day")
+@Composable
+fun TraitChipCodominantDayPreview() {
+    ScitalysTheme {
+        TraitChip(trait = Trait.PASTEL)
+    }
+}
+
+@ExperimentalMaterialApi
+@Preview(name = "TraitChip ꞏ Het ꞏ Day")
+@Composable
+fun TraitChipHetDayPreview() {
+    ScitalysTheme {
+        TraitChip(trait = Trait.HET_PIED)
+    }
+}
+
+@ExperimentalMaterialApi
+@Preview(name = "TraitChip ꞏ Coallelic ꞏ Day")
+@Composable
+fun TraitChipCoallelicDayPreview() {
+    ScitalysTheme {
+        TraitChip(trait = Trait.SUPER_PASTEL)
+    }
+}
+
+@ExperimentalMaterialApi
+@Preview(name = "TraitChip ꞏ Codominant ꞏ Night", uiMode = UI_MODE_NIGHT_YES)
+@Composable
+fun TraitChipCodominantNightPreview() {
+    ScitalysTheme {
+        TraitChip(trait = Trait.PASTEL)
+    }
+}
+
+@ExperimentalMaterialApi
+@Preview(name = "TraitChip ꞏ Het ꞏ Night", uiMode = UI_MODE_NIGHT_YES)
+@Composable
+fun TraitChipHetNightPreview() {
+    ScitalysTheme {
+        TraitChip(trait = Trait.HET_PIED)
+    }
+}
+
+@ExperimentalMaterialApi
+@Preview(name = "TraitChip ꞏ Coallelic ꞏ Night", uiMode = UI_MODE_NIGHT_YES)
+@Composable
+fun TraitChipCoallelicNightPreview() {
+    ScitalysTheme {
+        TraitChip(trait = Trait.SUPER_PASTEL)
     }
 }

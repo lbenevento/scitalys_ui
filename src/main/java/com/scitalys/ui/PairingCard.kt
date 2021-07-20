@@ -179,7 +179,7 @@ private fun Header(
                 specimen = male,
                 onChipClick = onChipClick
             )
-            Spacer(Modifier.height(5.dp))
+            Spacer(Modifier.height(10.dp))
             SpecimenRow(
                 specimen = female,
                 onChipClick = onChipClick
@@ -195,7 +195,7 @@ private fun SpecimenRow(
     strokeWidth: Dp = 1.dp,
     onChipClick: (trait: Trait) -> Unit
 ) {
-    Row {
+    ChipGroup {
         specimen.traits.keys.forEach { trait ->
             TraitChip(
                 trait = trait,

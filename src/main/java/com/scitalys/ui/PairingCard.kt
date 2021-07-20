@@ -130,7 +130,7 @@ fun Body(
         var currentPosition = 0
 
         offspring.forEach {
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 val (specimen, incidence) = it
                 Text(
                     text = stringResource(id = R.string.fraction)
@@ -146,7 +146,7 @@ fun Body(
             }
             // Add spacer only if it is not the last specimen in the list.
             if (currentPosition != lastPosition) {
-                Spacer(Modifier.height(5.dp))
+                Spacer(Modifier.height(10.dp))
             }
             currentPosition++
         }
@@ -196,9 +196,10 @@ private fun SpecimenRow(
     onChipClick: (trait: Trait) -> Unit
 ) {
     ChipGroup {
-        specimen.traits.keys.forEach { trait ->
+        specimen.traits.forEach { (trait, probability) ->
             TraitChip(
                 trait = trait,
+                probability = probability,
                 strokeWidth = strokeWidth,
                 modifier = Modifier
                     .padding(end = 5.dp),
@@ -237,6 +238,47 @@ fun PairingCardPreview() {
     ScitalysTheme {
         var state by remember {
             mutableStateOf(PairingCardState.Collapsed)
+        }
+        PairingCard(
+            pairing,
+            pairingCardState = state,
+            onExpandClick = {
+                state = when (it) {
+                    PairingCardState.Expanded -> PairingCardState.Collapsed
+                    PairingCardState.Collapsed -> PairingCardState.Expanded
+                }
+            },
+            onChipClick = {},
+        )
+    }
+}
+
+@ExperimentalMaterialApi
+@ExperimentalAnimationApi
+@Preview(name = "PairingCard ꞏ Expanded")
+@Composable
+fun PairingCardExpandedPreview() {
+
+    val pairing = Pairing(
+        male = Specimen(
+            traits = mutableMapOf(
+                Pair(Trait.ENCHI, 1f),
+                Pair(Trait.SUPER_PASTEL, 1f)
+            )
+        ),
+        female = Specimen(
+            traits = mutableMapOf(
+                Pair(Trait.SUPER_CYPRESS, 1f),
+                Pair(Trait.PIED, 1f),
+                Pair(Trait.CLOWN, 1f),
+                Pair(Trait.HET_GHOST, 0.5f)
+            )
+        )
+    )
+
+    ScitalysTheme {
+        var state by remember {
+            mutableStateOf(PairingCardState.Expanded)
         }
         PairingCard(
             pairing,

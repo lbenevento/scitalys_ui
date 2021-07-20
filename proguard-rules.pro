@@ -20,6 +20,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keepattributes class com.scitalys.bp_traits.Pairing {
-    <fields>;
-}
+#-keepattributes class com.scitalys.bp_traits.Pairing {
+#    <fields>;
+#}

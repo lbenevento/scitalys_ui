@@ -22,10 +22,6 @@ android {
         }
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
-
     composeOptions {
         kotlinCompilerVersion "1.5.10"
         kotlinCompilerExtensionVersion "1.0.0-rc01"

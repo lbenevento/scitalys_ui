@@ -27,7 +27,7 @@ fun ChipGroup(
         val rowHeights = mutableListOf<Int>()
 
         var rowWidth = 0
-        val placeables = measurables.mapIndexed { index, measurable ->
+        val placeables = measurables.mapIndexed { _, measurable ->
             val placeable = measurable.measure(constraints)
 
             if (rowWidth == 0 || rowWidth + placeable.width < constraints.maxWidth) {

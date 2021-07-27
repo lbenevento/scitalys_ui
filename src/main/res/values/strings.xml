@@ -8,4 +8,6 @@
 
     <string name="hetProbability" translatable="false">%1$d%% %2$s</string>
     <string name="fraction" translatable="false">%1$d\u2044%2$d</string>
+    <string name="percentage" translatable="false">%1$02d%%</string>
+    <string name="pairing_card_expand_arrow_description">Image description: This is an icon representing an arrow which when clicked gives the user access to the full data of the corresponding pairing.</string>
 </resources>

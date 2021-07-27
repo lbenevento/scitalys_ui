@@ -1,5 +1,6 @@
 package com.scitalys.ui
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.*
@@ -23,6 +24,7 @@ import com.scitalys.android.ballscalculator.ui.theme.ScitalysTheme
 import com.scitalys.bp_traits.Pairing
 import com.scitalys.bp_traits.Specimen
 import com.scitalys.bp_traits.Trait
+import com.scitalys.bp_traits.samples.pairing1
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -30,6 +32,7 @@ import com.scitalys.bp_traits.Trait
 fun PairingCard(
     pairing: Pairing,
     modifier: Modifier = Modifier,
+    oddsMode: Int = ODDS_MODE_FRACTION,
     pairingCardState: PairingCardState,
     onExpandClick: (state: PairingCardState) -> Unit,
     elevation: Dp = 4.dp,
@@ -108,6 +111,7 @@ fun PairingCard(
                 Body(
                     offspring = pairing.offspringMap,
                     oddsOutOf = pairing.totalPossibilities,
+                    oddsMode = oddsMode,
                     onChipClick = onChipClick
                 )
             }
@@ -121,6 +125,7 @@ fun PairingCard(
 fun Body(
     offspring: Map<Specimen, Int>,
     oddsOutOf: Int,
+    oddsMode: Int,
     onChipClick: (trait: Trait) -> Unit
 ) {
     Column {
@@ -130,19 +135,35 @@ fun Body(
         var currentPosition = 0
 
         offspring.forEach {
+            val (specimen, incidence) = it
+
             Row(verticalAlignment = Alignment.CenterVertically) {
-                val (specimen, incidence) = it
-                Text(
-                    text = stringResource(id = R.string.fraction)
-                        .format(incidence, oddsOutOf),
-                    color = MaterialTheme.colors.primaryVariant,
-                    modifier = Modifier.width(34.dp)
-                )
+
+                Column {
+                    if (oddsMode and ODDS_MODE_FRACTION == ODDS_MODE_FRACTION) {
+                        Text(
+                            text = stringResource(id = R.string.fraction)
+                                .format(incidence, oddsOutOf),
+                            color = MaterialTheme.colors.primaryVariant,
+                            modifier = Modifier.width(34.dp)
+                        )
+                    }
+                    if (oddsMode and ODDS_MODE_PERCENTAGE == ODDS_MODE_PERCENTAGE) {
+                        Text(
+                            text = stringResource(id = R.string.percentage)
+                                .format(incidence * 100 / oddsOutOf),
+                            style = MaterialTheme.typography.caption,
+                            color = MaterialTheme.colors.primaryVariant,
+                            modifier = Modifier.width(34.dp)
+                        )
+                    }
+                }
                 SpecimenRow(
                     specimen = specimen,
                     strokeWidth = 0.dp,
                     onChipClick = onChipClick
                 )
+
             }
             // Add spacer only if it is not the last specimen in the list.
             if (currentPosition != lastPosition) {
@@ -168,7 +189,7 @@ private fun Header(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_chevron_right),
-            contentDescription = "See offspring arrow.",
+            contentDescription = stringResource(R.string.pairing_card_expand_arrow_description),
             tint = MaterialTheme.colors.primaryVariant,
             modifier = Modifier
                 .padding(end = 10.dp)
@@ -214,33 +235,22 @@ enum class PairingCardState {
     Expanded
 }
 
+const val ODDS_MODE_FRACTION = 0x01
+const val ODDS_MODE_PERCENTAGE = 0x02
+const val ODDS_MODE_BOTH = 0x03
+
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
-@Preview
+@Preview(name = "Collapsed ꞏ Day")
 @Composable
-fun PairingCardPreview() {
-
-    val pairing = Pairing(
-        male = Specimen(
-            traits = mutableMapOf(
-                Pair(Trait.ENCHI, 1f),
-                Pair(Trait.SUPER_PASTEL, 1f)
-            )
-        ),
-        female = Specimen(
-            traits = mutableMapOf(
-                Pair(Trait.SUPER_CYPRESS, 1f),
-                Pair(Trait.PIED, 1f)
-            )
-        )
-    )
+fun PairingCardCollapsedDayPreview() {
 
     ScitalysTheme {
         var state by remember {
             mutableStateOf(PairingCardState.Collapsed)
         }
         PairingCard(
-            pairing,
+            pairing1,
             pairingCardState = state,
             onExpandClick = {
                 state = when (it) {
@@ -255,33 +265,41 @@ fun PairingCardPreview() {
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
-@Preview(name = "PairingCard ꞏ Expanded")
+@Preview(name = "Expanded ꞏ Night ꞏ Fraction", uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun PairingCardExpandedPreview() {
-
-    val pairing = Pairing(
-        male = Specimen(
-            traits = mutableMapOf(
-                Pair(Trait.ENCHI, 1f),
-                Pair(Trait.SUPER_PASTEL, 1f)
-            )
-        ),
-        female = Specimen(
-            traits = mutableMapOf(
-                Pair(Trait.SUPER_CYPRESS, 1f),
-                Pair(Trait.PIED, 1f),
-                Pair(Trait.CLOWN, 1f),
-                Pair(Trait.HET_GHOST, 0.5f)
-            )
-        )
-    )
+fun PairingCardExpandedNightFractionPreview() {
 
     ScitalysTheme {
         var state by remember {
             mutableStateOf(PairingCardState.Expanded)
         }
         PairingCard(
-            pairing,
+            pairing1,
+            pairingCardState = state,
+            onExpandClick = {
+                state = when (it) {
+                    PairingCardState.Expanded -> PairingCardState.Collapsed
+                    PairingCardState.Collapsed -> PairingCardState.Expanded
+                }
+            },
+            onChipClick = {},
+        )
+    }
+}
+
+@ExperimentalMaterialApi
+@ExperimentalAnimationApi
+@Preview(name = "Expanded ꞏ Night ꞏ Both", uiMode = UI_MODE_NIGHT_YES)
+@Composable
+fun PairingCardExpandedDayBothPreview() {
+
+    ScitalysTheme {
+        var state by remember {
+            mutableStateOf(PairingCardState.Expanded)
+        }
+        PairingCard(
+            pairing1,
+            oddsMode = ODDS_MODE_BOTH,
             pairingCardState = state,
             onExpandClick = {
                 state = when (it) {

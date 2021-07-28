@@ -86,7 +86,8 @@ fun PairingCard(
 
     Card(
         shape = RoundedCornerShape(20.dp),
-        border = BorderStroke(strokeWidth, MaterialTheme.colors.primaryVariant),
+        border = if (strokeWidth == 0.dp) null
+        else BorderStroke(strokeWidth, MaterialTheme.colors.primaryVariant),
         modifier = modifier
             .padding(horizontal = cardPadding.coerceAtLeast(0.dp))
             .shadow(

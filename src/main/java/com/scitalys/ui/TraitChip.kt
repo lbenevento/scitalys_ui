@@ -12,7 +12,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -40,7 +39,7 @@ fun TraitChip(
         end = 6.dp,
         bottom = 1.dp
     ),
-    onChipClick: (trait: Trait) -> Unit = { }
+    onClick: (trait: Trait) -> Unit = { }
 ) {
     val colors = if (isSystemInDarkTheme()) {
         if (trait.isHetRecessive()) {
@@ -69,7 +68,7 @@ fun TraitChip(
             width = strokeWidth,
             color = colors.border
         ),
-        onClick = { onChipClick(trait) }
+        onClick = { onClick(trait) }
     ) {
         val text = if (probability != 1f) {
             stringResource(id = R.string.hetProbability)

@@ -21,7 +21,6 @@ import java.util.*
 /**
  * This class represents the dataset for the array.
  */
-
 data class ChipifyArrayObject(
     val specimens: List<Specimen>,
     val traits: List<Trait>
@@ -269,12 +268,12 @@ class ChipifyArrayAdapter(
                 val objects: ChipifyArrayObject
                 synchronized(lock) { objects = originalObjects }
                 results.values = objects
-                results.count = objects.specimens.size + objects.traits.size - 1
+                results.count = objects.specimens.size + objects.traits.size
             } else {
                 val prefixString = prefix.toString().lowercase(Locale.getDefault())
                 val objects: ChipifyArrayObject
                 synchronized(lock) { objects = originalObjects }
-                val count = objects.specimens.size + objects.traits.size - 1
+                val count = objects.specimens.size + objects.traits.size
                 val newSpecimens = mutableListOf<Specimen>()
                 val newTraits = mutableListOf<Trait>()
                 for (i in 0 until count) {

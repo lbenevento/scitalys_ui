@@ -225,7 +225,7 @@ private fun SpecimenRow(
                 strokeWidth = strokeWidth,
                 modifier = Modifier
                     .padding(end = 5.dp),
-                onChipClick = onChipClick
+                onClick = onChipClick
             )
         }
     }

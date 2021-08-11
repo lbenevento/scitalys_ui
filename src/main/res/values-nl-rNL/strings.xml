@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hetProbability" translatable="false">%1$d%% %2$s</string>
-    <string name="fraction" translatable="false">%1$d\u2044%2$d</string>
-    <string name="percentage" translatable="false">%1$02d%%</string>
-
     <string name="specimen_colon">"Specimens: "</string>
     <string name="traits_colon">"Traits: "</string>
     <string name="no_specimen_found">No specimen found.</string>
-
     <string name="pairing_card_expand_arrow_description">Image description: This is an icon representing an arrow which when clicked gives the user access to the full data of the corresponding pairing.</string>
 </resources>

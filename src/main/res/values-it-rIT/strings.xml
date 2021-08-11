@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="specimen_colon">"Esemplari: "</string>
+    <string name="traits_colon">"Tratti: "</string>
+    <string name="no_specimen_found">Nessun esemplare trovato.</string>
+    <string name="pairing_card_expand_arrow_description">Descrizione immagine: Questa icona rappresenta una freccia che, se cliccata, permette di visualizzare i dati completi dell\'accoppiamento corrispondente.</string>
+</resources>

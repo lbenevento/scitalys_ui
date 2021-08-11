@@ -1,9 +1,7 @@
 package com.scitalys.ui.theme
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
-import com.scitalys.android.ballscalculator.ui.theme.*
 
 
 val lightChipsColors = ChipsColors(

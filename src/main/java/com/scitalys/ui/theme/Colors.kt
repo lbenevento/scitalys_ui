@@ -1,4 +1,4 @@
-package com.scitalys.android.ballscalculator.ui.theme
+package com.scitalys.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

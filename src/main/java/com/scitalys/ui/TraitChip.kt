@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.scitalys.android.ballscalculator.ui.theme.ScitalysTheme
+import com.scitalys.ui.theme.ScitalysTheme
 import com.scitalys.ui.theme.*
 import com.scitalys.bp_traits.Trait
 import com.scitalys.bp_traits.isHetRecessive

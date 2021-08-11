@@ -1,4 +1,4 @@
-package com.scitalys.android.ballscalculator.ui.theme
+package com.scitalys.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
@@ -6,7 +6,6 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.scitalys.ui.theme.*
 
 @Composable
 fun ScitalysTheme(

@@ -7,7 +7,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.scitalys.android.ballscalculator.ui.theme.ScitalysTheme
+import com.scitalys.ui.theme.ScitalysTheme
 import com.scitalys.bp_traits.Trait
 
 @Composable

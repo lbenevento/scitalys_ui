@@ -28,13 +28,13 @@ val darkChipColors = ChipsColors(
         override val background = Color(0xFF121212)
     },
     coallelic = object: ChipAttrsColors {
-        override val text = Green200
-        override val border = Green200
+        override val text = Purple200
+        override val border = Purple200
         override val background = Color(0xFF121212)
     },
     recessiveHet = object: ChipAttrsColors {
-        override val text = Purple200
-        override val border = Purple200
+        override val text = Green200
+        override val border = Green200
         override val background = Color(0xFF121212)
     }
 )

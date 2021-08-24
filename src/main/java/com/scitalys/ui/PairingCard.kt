@@ -140,28 +140,11 @@ fun Body(
 
             Row(verticalAlignment = Alignment.CenterVertically) {
 
-                Column {
-                    if (oddsMode and ODDS_MODE_FRACTION == ODDS_MODE_FRACTION) {
-                        Text(
-                            text = stringResource(id = R.string.fraction)
-                                .format(incidence, oddsOutOf),
-                            color = MaterialTheme.colors.primaryVariant,
-                            modifier = Modifier.width(34.dp)
-                        )
-                    }
-                    if (oddsMode and ODDS_MODE_PERCENTAGE == ODDS_MODE_PERCENTAGE) {
-                        Text(
-                            text = stringResource(id = R.string.percentage)
-                                .format(incidence * 100 / oddsOutOf),
-                            style = MaterialTheme.typography.caption,
-                            color = MaterialTheme.colors.primaryVariant,
-                            modifier = Modifier.width(34.dp)
-                        )
-                    }
-                }
-                SpecimenRow(
+                OddsSpecimenRow(
                     specimen = specimen,
-                    strokeWidth = 0.dp,
+                    oddsMode = oddsMode,
+                    incidence = incidence,
+                    oddsOutOf = oddsOutOf,
                     onChipClick = onChipClick
                 )
 
@@ -205,27 +188,6 @@ private fun Header(
             SpecimenRow(
                 specimen = female,
                 onChipClick = onChipClick
-            )
-        }
-    }
-}
-
-@ExperimentalMaterialApi
-@Composable
-private fun SpecimenRow(
-    specimen: Specimen,
-    strokeWidth: Dp = 1.dp,
-    onChipClick: (trait: Trait) -> Unit
-) {
-    ChipGroup {
-        specimen.traits.forEach { (trait, probability) ->
-            TraitChip(
-                trait = trait,
-                probability = probability,
-                strokeWidth = strokeWidth,
-                modifier = Modifier
-                    .padding(end = 5.dp),
-                onClick = onChipClick
             )
         }
     }

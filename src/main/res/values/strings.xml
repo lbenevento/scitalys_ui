@@ -9,4 +9,5 @@
     <string name="no_specimen_found">No specimen found.</string>
 
     <string name="pairing_card_expand_arrow_description">Image description: This is an icon representing an arrow which when clicked gives the user access to the full data of the corresponding pairing.</string>
+    <string name="image_des_arrow_drop_down">Image description: this icon represents an arrow pointing down, it is used to show the dropdown menù.</string>
 </resources>

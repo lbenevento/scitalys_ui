@@ -18,12 +18,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.scitalys.bp_traits.*
 import com.scitalys.ui.theme.ScitalysTheme
 import com.scitalys.ui.theme.*
-import com.scitalys.bp_traits.Trait
-import com.scitalys.bp_traits.isHetRecessive
-import com.scitalys.bp_traits.isHomoCodominant
-import com.scitalys.bp_traits.isHomoRecessive
 
 @ExperimentalMaterialApi
 @Composable
@@ -87,6 +84,83 @@ fun TraitChip(
                 color = colors.border
             ),
             onClick = { onClick(trait) }
+        ) { traitChipContent() }
+    } else {
+        Surface(
+            modifier = modifier,
+            elevation = 2.dp,
+            shape = RoundedCornerShape(50),
+            color = colors.background,
+            border = BorderStroke(
+                width = strokeWidth,
+                color = colors.border
+            )
+        ) { traitChipContent() }
+    }
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun TraitChip(
+    morph: Morph,
+    modifier: Modifier = Modifier,
+    probability: Float = 1f,
+    strokeWidth: Dp = 1.dp,
+    fontSize: TextUnit = 14.sp,
+    textPadding: PaddingValues = PaddingValues(
+        start = 6.dp,
+        top = 1.dp,
+        end = 6.dp,
+        bottom = 1.dp
+    ),
+    onClick: ((morph: Morph) -> Unit)? = null
+) {
+    val colors = if (isSystemInDarkTheme()) {
+        if (morph.isHetRecessive()) {
+            darkChipColors.recessiveHet
+        } else if (morph.isHomoCodominant() || morph.isHomoRecessive()) {
+            darkChipColors.coallelic
+        } else {
+            darkChipColors.codominant
+        }
+    } else {
+        if (morph.isHetRecessive()) {
+            lightChipsColors.recessiveHet
+        } else if (morph.isHomoCodominant() || morph.isHomoRecessive()) {
+            lightChipsColors.coallelic
+        } else {
+            lightChipsColors.codominant
+        }
+    }
+
+
+    val traitChipContent: @Composable () -> Unit = {
+        val text = if (probability != 1f) {
+            stringResource(id = R.string.hetProbability)
+                .format((probability * 100).toInt(), morph.formattedString)
+        } else {
+            morph.formattedString
+        }
+        Text(
+            text = text,
+            fontSize = fontSize,
+            style = MaterialTheme.typography.subtitle2,
+            color = colors.text,
+            modifier = Modifier.padding(textPadding)
+        )
+    }
+
+    if (onClick != null) {
+        Surface(
+            modifier = modifier,
+            elevation = 2.dp,
+            shape = RoundedCornerShape(50),
+            color = colors.background,
+            border = BorderStroke(
+                width = strokeWidth,
+                color = colors.border
+            ),
+            onClick = { onClick(morph) }
         ) { traitChipContent() }
     } else {
         Surface(

@@ -7,6 +7,9 @@ import android.text.SpannableString
 import android.text.style.ReplacementSpan
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowDropDown
@@ -14,17 +17,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.AnnotatedString.Builder
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.core.text.buildSpannedString
 import androidx.core.text.set
+import com.scitalys.bp_traits.Trait
 import com.scitalys.ui.theme.ScitalysTheme
 import kotlin.math.roundToInt
 
@@ -33,29 +36,26 @@ import kotlin.math.roundToInt
 fun MorphInputText(
     modifier: Modifier = Modifier
 ) {
-    var text by remember {
-        mutableStateOf("")
+    var text = buildAnnotatedString {
+        appendInlineContent("chip1", "Acid")
     }
+    val inlineContent = mapOf(
+        "chip1" to InlineTextContent(
+            Placeholder(
+                width = 3.em,
+                height = 2.em,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.AboveBaseline
+            )
+        ) {
+            Trait.getTraitFromString(it)?.let { it1 -> TraitChip(trait = it1) }
+        }
+    )
     var dropdownExpanded by remember {
         mutableStateOf(false)
     }
-    OutlinedTextField(
-        value = text,
-        onValueChange = {
-            text = it
-        },
-        modifier = modifier,
-        trailingIcon = {
-            IconButton(onClick = { dropdownExpanded = !dropdownExpanded }) {
-                Icon(
-                    painter = rememberVectorPainter(Icons.Rounded.ArrowDropDown),
-                    contentDescription = stringResource(id = R.string.image_des_arrow_drop_down)
-                )
-            }
-        },
-        visualTransformation = ChipsVisualTransformations(),
-        shape = RoundedCornerShape(50),
-    )
+//    TextField(value =, onValueChange =)
+
+    BasicText(text = text, inlineContent = inlineContent)
 }
 
 class ChipsVisualTransformations() : VisualTransformation {

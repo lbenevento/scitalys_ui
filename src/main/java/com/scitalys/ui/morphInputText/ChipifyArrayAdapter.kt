@@ -10,9 +10,11 @@ import android.widget.Filterable
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.chip.ChipGroup
+import com.scitalys.bp_traits.Morph
 import com.scitalys.bp_traits.Trait
 import com.scitalys.bp_traits.Specimen
 import com.scitalys.ui.R
+import com.scitalys.ui.utils.createChipFromMorph
 import com.scitalys.ui.utils.createChipFromTrait
 import com.scitalys.ui.utils.dp
 import com.scitalys.ui.utils.sp
@@ -79,13 +81,17 @@ class ChipifyArrayAdapter(
             specimensTitlePosition -> null
             traitsTitlePosition -> null
             in specimensPositions -> {
-                val traitsList = objects.specimens[position - 1].traits.keys.toList()
+                val lociPairs = objects.specimens[position - 1].morph.keys.toList()
+                val morphs = mutableListOf<Morph>()
+                lociPairs.forEach { lociPair ->
+                    morphs.add(Morph.values().first { it.mutations == setOf(lociPair) })
+                }
                 var string = ""
-                traitsList.forEachIndexed { index, trait ->
-                    string += if (index == traitsList.size - 1) {
-                        trait.formattedString
+                morphs.forEachIndexed { index, morph ->
+                    string += if (index == morphs.size - 1) {
+                        morph.formattedString
                     } else {
-                        trait.formattedString + ","
+                        morph.formattedString + ","
                     }
                 }
                 return string
@@ -188,11 +194,12 @@ class ChipifyArrayAdapter(
         val constraintLayout = ConstraintLayout(context)
         val chipGroup = ChipGroup(context)
 
-        for (trait in specimen.traits.keys) {
+        for (lociPair in specimen.morph.keys) {
+            val morph = Morph.values().first { it.mutations == setOf(lociPair) }
             chipGroup.addView(
-                createChipFromTrait(
+                createChipFromMorph(
                     context,
-                    Pair(trait, 1f),
+                    Pair(morph, 1f),
                     textSize = textSize
                 ).apply {
                     isClickable = false
@@ -282,8 +289,9 @@ class ChipifyArrayAdapter(
                         val specimen = objects.specimens[i]
 
                         var specimenText = ""
-                        specimen.traits.keys.forEach {
-                            specimenText += it.formattedString.lowercase(Locale.getDefault()) + " "
+                        specimen.morph.keys.forEach { lociPair ->
+                            val morph = Morph.values().first { it.mutations.first() == lociPair }
+                            specimenText += morph.formattedString.lowercase(Locale.getDefault()) + " "
                         }
 
                         // First match against the whole, non-splitted value

@@ -68,7 +68,8 @@ fun SpecimenRow(
     ChipGroup {
         specimen.morph.forEach { (lociPair, probability) ->
             TraitChip(
-                morph = Morph.values().first { it.mutations == setOf(lociPair) },
+                morph = Morph.values().firstOrNull { it.mutations == setOf(lociPair) }
+                    ?: Morph.fromValue(LociPair())!!,
                 probability = probability,
                 strokeWidth = strokeWidth,
                 modifier = Modifier

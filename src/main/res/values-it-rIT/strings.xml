@@ -4,4 +4,5 @@
     <string name="traits_colon">"Tratti: "</string>
     <string name="no_specimen_found">Nessun esemplare trovato.</string>
     <string name="pairing_card_expand_arrow_description">Descrizione immagine: Questa icona rappresenta una freccia che, se cliccata, permette di visualizzare i dati completi dell\'accoppiamento corrispondente.</string>
+    <string name="image_des_arrow_drop_down">Descrizione immagine: questa icona rappresenta una freccia rivolta verso il basso, viene usata per mostrare il menu a discesa.</string>
 </resources>

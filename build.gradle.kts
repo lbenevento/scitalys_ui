@@ -11,7 +11,7 @@ android {
     defaultConfig {
         minSdk = 25
         targetSdk = 31
-        version = "1.2.5-beta01"
+        version = getVersionName()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles.add(File("consumer-rules.pro"))
@@ -20,7 +20,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -71,54 +74,51 @@ dependencies {
 
 }
 
-//Publishing
+// Publishing
 
 val env = System.getenv()
 val github_usr = env["GITHUB_USR"]
 val github_key = env["GITHUB_PACKAGES_KEY"]
 
-fun getVersionName(): String? {
-    return android.defaultConfig.versionName
+fun getVersionName(): String {
+    return "1.2.6-alpha02"
 }
 
 fun getArtifactId(): String {
     return "ui"
 }
 
-afterEvaluate {
+publishing {
+    publications {
+        create<MavenPublication>("gpr") {
 
-    publishing {
+            groupId = "com.scitalys"
+            artifactId = getArtifactId()
+            version = getVersionName()
+            artifact("$buildDir/outputs/aar/${getArtifactId()}-release.aar")
 
-        publications {
-            register("bar", MavenPublication::class) {
-                groupId = "com.scitalys"
-                artifactId = getArtifactId()
-                version = getVersionName()
-                artifact("$buildDir/outputs/aar/${getArtifactId()}-release.aar")
+            pom.withXml {
+                val dependenciesNode = asNode().appendNode("dependencies")
 
-                pom.withXml {
-                    val dependenciesNode = asNode().appendNode("dependencies")
-
-                    configurations.api.allDependencies.forEach {
-                        val dependencyNode = dependenciesNode.appendNode("dependency")
-                        dependencyNode.appendNode("groupId", it.group)
-                        dependencyNode.appendNode("artifactId", it.name)
-                        dependencyNode.appendNode("version", it.version)
-                    }
+                configurations.api.get().allDependencies.forEach {
+                    val dependencyNode = dependenciesNode.appendNode("dependency")
+                    dependencyNode.appendNode("groupId", it.group)
+                    dependencyNode.appendNode("artifactId", it.name)
+                    dependencyNode.appendNode("version", it.version)
                 }
             }
+
         }
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/beneventolorenzo/ui")
-                credentials {
-                    username = github_usr
-                    password = github_key
-                }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/beneventolorenzo/ui")
+            credentials {
+                username = github_usr
+                password = github_key
             }
         }
-
     }
 
 }

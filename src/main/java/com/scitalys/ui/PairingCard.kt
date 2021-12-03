@@ -132,7 +132,7 @@ fun PairingCard(
 
 @ExperimentalMaterialApi
 @Composable
-fun Body(
+private fun Body(
     offspring: Map<Specimen, Int>,
     oddsOutOf: Int,
     oddsMode: Int,

@@ -6,10 +6,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,7 +21,6 @@ import com.scitalys.bp_traits.*
 import com.scitalys.ui.theme.ScitalysTheme
 import com.scitalys.ui.theme.*
 
-@ExperimentalMaterialApi
 @Composable
 fun TraitChip(
     trait: Trait,
@@ -67,7 +65,7 @@ fun TraitChip(
         Text(
             text = text,
             fontSize = fontSize,
-            style = MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.labelSmall,
             color = colors.text,
             modifier = Modifier.padding(textPadding)
         )
@@ -76,7 +74,7 @@ fun TraitChip(
     if (onClick != null) {
         Surface(
             modifier = modifier,
-            elevation = 2.dp,
+            tonalElevation = 2.dp,
             shape = RoundedCornerShape(50),
             color = colors.background,
             border = BorderStroke(
@@ -88,7 +86,7 @@ fun TraitChip(
     } else {
         Surface(
             modifier = modifier,
-            elevation = 2.dp,
+            tonalElevation = 2.dp,
             shape = RoundedCornerShape(50),
             color = colors.background,
             border = BorderStroke(
@@ -99,7 +97,6 @@ fun TraitChip(
     }
 }
 
-@ExperimentalMaterialApi
 @Composable
 fun TraitChip(
     morph: Morph,
@@ -144,7 +141,7 @@ fun TraitChip(
         Text(
             text = text,
             fontSize = fontSize,
-            style = MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.labelSmall,
             color = colors.text,
             modifier = Modifier.padding(textPadding)
         )
@@ -153,7 +150,7 @@ fun TraitChip(
     if (onClick != null) {
         Surface(
             modifier = modifier,
-            elevation = 2.dp,
+            tonalElevation = 2.dp,
             shape = RoundedCornerShape(50),
             color = colors.background,
             border = BorderStroke(
@@ -165,7 +162,7 @@ fun TraitChip(
     } else {
         Surface(
             modifier = modifier,
-            elevation = 2.dp,
+            tonalElevation = 2.dp,
             shape = RoundedCornerShape(50),
             color = colors.background,
             border = BorderStroke(
@@ -176,7 +173,6 @@ fun TraitChip(
     }
 }
 
-@ExperimentalMaterialApi
 @Preview(name = "TraitChip ꞏ Codominant ꞏ Day")
 @Composable
 fun TraitChipCodominantDayPreview() {
@@ -185,7 +181,6 @@ fun TraitChipCodominantDayPreview() {
     }
 }
 
-@ExperimentalMaterialApi
 @Preview(name = "TraitChip ꞏ Het ꞏ Day")
 @Composable
 fun TraitChipHetDayPreview() {
@@ -194,7 +189,6 @@ fun TraitChipHetDayPreview() {
     }
 }
 
-@ExperimentalMaterialApi
 @Preview(name = "TraitChip ꞏ Coallelic ꞏ Day")
 @Composable
 fun TraitChipCoallelicDayPreview() {
@@ -203,7 +197,6 @@ fun TraitChipCoallelicDayPreview() {
     }
 }
 
-@ExperimentalMaterialApi
 @Preview(name = "TraitChip ꞏ Probable Het ꞏ Day")
 @Composable
 fun TraitChipProbableHetDayPreview() {
@@ -212,7 +205,6 @@ fun TraitChipProbableHetDayPreview() {
     }
 }
 
-@ExperimentalMaterialApi
 @Preview(name = "TraitChip ꞏ Codominant ꞏ Night", uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun TraitChipCodominantNightPreview() {
@@ -221,7 +213,6 @@ fun TraitChipCodominantNightPreview() {
     }
 }
 
-@ExperimentalMaterialApi
 @Preview(name = "TraitChip ꞏ Het ꞏ Night", uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun TraitChipHetNightPreview() {
@@ -230,7 +221,6 @@ fun TraitChipHetNightPreview() {
     }
 }
 
-@ExperimentalMaterialApi
 @Preview(name = "TraitChip ꞏ Coallelic ꞏ Night", uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun TraitChipCoallelicNightPreview() {
@@ -239,7 +229,6 @@ fun TraitChipCoallelicNightPreview() {
     }
 }
 
-@ExperimentalMaterialApi
 @Preview(name = "TraitChip ꞏ Probable Het ꞏ Night", uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun TraitChipProbableHetNightPreview() {

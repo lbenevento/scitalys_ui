@@ -9,15 +9,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,10 +27,9 @@ import com.scitalys.bp_traits.Morph
 import com.scitalys.ui.theme.ScitalysTheme
 import com.scitalys.bp_traits.Pairing
 import com.scitalys.bp_traits.Specimen
-import com.scitalys.bp_traits.Trait
 import com.scitalys.bp_traits.samples.pairing1
 
-@ExperimentalMaterialApi
+
 @ExperimentalMaterial3Api
 @ExperimentalAnimationApi
 @Composable
@@ -130,7 +129,8 @@ fun PairingCard(
     Spacer(modifier = Modifier.height(10.dp))
 }
 
-@ExperimentalMaterialApi
+
+@ExperimentalMaterial3Api
 @Composable
 private fun Body(
     offspring: Map<Specimen, Int>,
@@ -167,7 +167,8 @@ private fun Body(
     }
 }
 
-@ExperimentalMaterialApi
+
+@ExperimentalMaterial3Api
 @Composable
 private fun Header(
     male: Specimen,
@@ -211,8 +212,28 @@ const val ODDS_MODE_FRACTION = 0x01
 const val ODDS_MODE_PERCENTAGE = 0x02
 const val ODDS_MODE_BOTH = 0x03
 
+@Composable
+fun Card(
+    modifier: Modifier = Modifier,
+    shape: Shape = androidx.compose.material.MaterialTheme.shapes.medium,
+    backgroundColor: Color = androidx.compose.material.MaterialTheme.colors.surface,
+    contentColor: Color = contentColorFor(backgroundColor),
+    border: BorderStroke? = null,
+    elevation: Dp = 1.dp,
+    content: @Composable () -> Unit
+) {
+    Surface(
+        modifier = modifier,
+        shape = shape,
+        color = backgroundColor,
+        contentColor = contentColor,
+        tonalElevation = elevation,
+        border = border,
+        content = content
+    )
+}
+
 @ExperimentalMaterial3Api
-@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Preview(name = "Collapsed ꞏ Day")
 @Composable
@@ -237,7 +258,6 @@ fun PairingCardCollapsedDayPreview() {
 }
 
 @ExperimentalMaterial3Api
-@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Preview(name = "Expanded ꞏ Night ꞏ Fraction", uiMode = UI_MODE_NIGHT_YES)
 @Composable
@@ -262,7 +282,6 @@ fun PairingCardExpandedNightFractionPreview() {
 }
 
 @ExperimentalMaterial3Api
-@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Preview(name = "Expanded ꞏ Night ꞏ Both", uiMode = UI_MODE_NIGHT_YES)
 @Composable

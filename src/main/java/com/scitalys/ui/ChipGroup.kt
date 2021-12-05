@@ -1,8 +1,7 @@
 package com.scitalys.ui
 
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalMinimumTouchTargetEnforcement
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalMinimumTouchTargetEnforcement
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -13,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.scitalys.ui.theme.ScitalysTheme
 import com.scitalys.bp_traits.Trait
 
-@ExperimentalMaterialApi
+@ExperimentalMaterial3Api
 @Composable
 fun ChipGroup(
     modifier: Modifier = Modifier,
@@ -108,7 +107,7 @@ fun ChipGroup(
     }
 }
 
-@ExperimentalMaterialApi
+@ExperimentalMaterial3Api
 @Preview
 @Composable
 fun ChipGroupPreview() {

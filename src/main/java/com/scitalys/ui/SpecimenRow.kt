@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.scitalys.bp_traits.*
 import com.scitalys.ui.theme.ScitalysTheme
 
-@ExperimentalMaterialApi
+@ExperimentalMaterial3Api
 @Composable
 fun OddsSpecimenRow(
     specimen: Specimen,
@@ -34,7 +34,7 @@ fun OddsSpecimenRow(
                 Text(
                     text = stringResource(id = R.string.fraction)
                         .format(incidence, oddsOutOf),
-                    color = MaterialTheme.colors.primaryVariant,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.width(34.dp)
                 )
             }
@@ -42,8 +42,8 @@ fun OddsSpecimenRow(
                 Text(
                     text = stringResource(id = R.string.percentage)
                         .format(incidence * 100 / oddsOutOf),
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.primaryVariant,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.width(34.dp)
                 )
             }
@@ -58,7 +58,7 @@ fun OddsSpecimenRow(
 }
 
 
-@ExperimentalMaterialApi
+@ExperimentalMaterial3Api
 @Composable
 fun SpecimenRow(
     specimen: Specimen,
@@ -80,7 +80,7 @@ fun SpecimenRow(
     }
 }
 
-@ExperimentalMaterialApi
+@ExperimentalMaterial3Api
 @Preview(
     name = "OddsSpecimenRow ꞏ Day ꞏ Fraction",
     group = "OddsSpecimenRow"
@@ -104,7 +104,7 @@ fun OddsSpecimenRowDayFraction() {
     }
 }
 
-@ExperimentalMaterialApi
+@ExperimentalMaterial3Api
 @Preview(
     name = "OddsSpecimenRow ꞏ Night ꞏ Both",
     group = "OddsSpecimenRow",
@@ -130,7 +130,7 @@ fun OddsSpecimenRowNightBoth() {
 }
 
 
-@ExperimentalMaterialApi
+@ExperimentalMaterial3Api
 @Preview(
     name = "SpecimenRow ꞏ Day",
     group = "SpecimenRow"
@@ -151,7 +151,7 @@ private fun SpecimenRowDay() {
     }
 }
 
-@ExperimentalMaterialApi
+@ExperimentalMaterial3Api
 @Preview(
     name = "SpecimenRow ꞏ Night",
     group = "SpecimenRow",

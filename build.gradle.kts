@@ -81,7 +81,7 @@ val github_usr = env["GITHUB_USR"]
 val github_key = env["GITHUB_PACKAGES_KEY"]
 
 fun getVersionName(): String {
-    return "1.2.6-alpha02"
+    return "1.2.6-alpha04"
 }
 
 fun getArtifactId(): String {

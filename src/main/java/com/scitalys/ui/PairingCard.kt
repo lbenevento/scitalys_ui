@@ -216,7 +216,7 @@ const val ODDS_MODE_BOTH = 0x03
 fun Card(
     modifier: Modifier = Modifier,
     shape: Shape = androidx.compose.material.MaterialTheme.shapes.medium,
-    backgroundColor: Color = androidx.compose.material.MaterialTheme.colors.surface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(backgroundColor),
     border: BorderStroke? = null,
     elevation: Dp = 1.dp,

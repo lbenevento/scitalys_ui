@@ -81,7 +81,7 @@ class ChipifyArrayAdapter(
             specimensTitlePosition -> null
             traitsTitlePosition -> null
             in specimensPositions -> {
-                val lociPairs = objects.specimens[position - 1].morph.keys.toList()
+                val lociPairs = objects.specimens[position - 1].loci.keys.toList()
                 val morphs = mutableListOf<Morph>()
                 lociPairs.forEach { lociPair ->
                     morphs.add(Morph.values().first { it.mutations == setOf(lociPair) })
@@ -194,7 +194,7 @@ class ChipifyArrayAdapter(
         val constraintLayout = ConstraintLayout(context)
         val chipGroup = ChipGroup(context)
 
-        for (lociPair in specimen.morph.keys) {
+        for (lociPair in specimen.loci.keys) {
             val morph = Morph.values().first { it.mutations == setOf(lociPair) }
             chipGroup.addView(
                 createChipFromMorph(
@@ -289,7 +289,7 @@ class ChipifyArrayAdapter(
                         val specimen = objects.specimens[i]
 
                         var specimenText = ""
-                        specimen.morph.keys.forEach { lociPair ->
+                        specimen.loci.keys.forEach { lociPair ->
                             val morph = Morph.values().first { it.mutations.first() == lociPair }
                             specimenText += morph.formattedString.lowercase(Locale.getDefault()) + " "
                         }

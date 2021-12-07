@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.scitalys.bp_traits.*
+import com.scitalys.ui.theme.Roboto
 import com.scitalys.ui.theme.ScitalysTheme
 
 @ExperimentalMaterial3Api
@@ -34,7 +35,9 @@ fun OddsSpecimenRow(
                 Text(
                     text = stringResource(id = R.string.fraction)
                         .format(incidence, oddsOutOf),
+                    style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary,
+                    fontFamily = Roboto,
                     modifier = Modifier.width(34.dp)
                 )
             }
@@ -44,6 +47,7 @@ fun OddsSpecimenRow(
                         .format(incidence * 100 / oddsOutOf),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary,
+                    fontFamily = Roboto,
                     modifier = Modifier.width(34.dp)
                 )
             }
@@ -66,10 +70,9 @@ fun SpecimenRow(
     onChipClick: (morph: Morph) -> Unit
 ) {
     ChipGroup {
-        specimen.morph.forEach { (lociPair, probability) ->
+        specimen.loci.forEach { (lociPair, probability) ->
             TraitChip(
-                morph = Morph.values().firstOrNull { it.mutations == setOf(lociPair) }
-                    ?: Morph.fromValue(LociPair())!!,
+                morph = Morph.values().first { it.mutations == setOf(lociPair) },
                 probability = probability,
                 strokeWidth = strokeWidth,
                 modifier = Modifier
@@ -90,7 +93,7 @@ fun OddsSpecimenRowDayFraction() {
     ScitalysTheme {
         OddsSpecimenRow(
             specimen = Specimen(
-                morphMap = mutableMapOf(
+                lociMap = mutableMapOf(
                     LociPair(Mutation.ENCHI) to 1f,
                     LociPair(Mutation.PASTEL) to 1f,
                     LociPair(Mutation.HET_PIED, Mutation.HET_PIED) to 1f
@@ -115,7 +118,7 @@ fun OddsSpecimenRowNightBoth() {
     ScitalysTheme {
         OddsSpecimenRow(
             specimen = Specimen(
-                morphMap = mutableMapOf(
+                lociMap = mutableMapOf(
                     LociPair(Mutation.ENCHI) to 1f,
                     LociPair(Mutation.PASTEL) to 1f,
                     LociPair(Mutation.HET_PIED, Mutation.HET_PIED) to 1f
@@ -140,7 +143,7 @@ private fun SpecimenRowDay() {
     ScitalysTheme {
         SpecimenRow(
             specimen = Specimen(
-                morphMap = mutableMapOf(
+                lociMap = mutableMapOf(
                     LociPair(Mutation.ENCHI) to 1f,
                     LociPair(Mutation.PASTEL) to 1f,
                     LociPair(Mutation.HET_PIED, Mutation.HET_PIED) to 1f
@@ -162,7 +165,7 @@ private fun SpecimenRowNight() {
     ScitalysTheme {
         SpecimenRow(
             specimen = Specimen(
-                morphMap = mutableMapOf(
+                lociMap = mutableMapOf(
                     LociPair(Mutation.ENCHI) to 1f,
                     LociPair(Mutation.PASTEL) to 1f,
                     LociPair(Mutation.HET_PIED, Mutation.HET_PIED) to 1f

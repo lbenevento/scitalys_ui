@@ -8,6 +8,7 @@ import android.util.TypedValue
 import android.view.View
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.compose.ui.graphics.Color
 import com.google.android.material.chip.Chip
 import com.scitalys.bp_traits.Morph
 import com.scitalys.bp_traits.Trait
@@ -250,6 +251,17 @@ fun createChipFromMorph(
     chip.chipMinHeight = 0f
 
     return chip
+}
+
+fun blendColors(color1: Color, color2: Color, ratio: Float): Color {
+    val inverseRatio = 1f - ratio
+
+    val a = (color1.alpha * inverseRatio) + (color2.alpha * ratio)
+    val r = (color1.red * inverseRatio) + (color2.red * ratio)
+    val g = (color1.green * inverseRatio) + (color2.green * ratio)
+    val b = (color1.blue * inverseRatio) + (color2.blue * ratio)
+
+    return Color(red = r, green = g, blue = b, alpha = a)
 }
 
 inline val density

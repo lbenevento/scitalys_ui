@@ -93,7 +93,7 @@ fun OddsSpecimenRowDayFraction() {
     ScitalysTheme {
         OddsSpecimenRow(
             specimen = Specimen(
-                lociMap = mutableMapOf(
+                loci = mutableMapOf(
                     LociPair(Mutation.ENCHI) to 1f,
                     LociPair(Mutation.PASTEL) to 1f,
                     LociPair(Mutation.HET_PIED, Mutation.HET_PIED) to 1f
@@ -118,7 +118,7 @@ fun OddsSpecimenRowNightBoth() {
     ScitalysTheme {
         OddsSpecimenRow(
             specimen = Specimen(
-                lociMap = mutableMapOf(
+                loci = mutableMapOf(
                     LociPair(Mutation.ENCHI) to 1f,
                     LociPair(Mutation.PASTEL) to 1f,
                     LociPair(Mutation.HET_PIED, Mutation.HET_PIED) to 1f
@@ -143,7 +143,7 @@ private fun SpecimenRowDay() {
     ScitalysTheme {
         SpecimenRow(
             specimen = Specimen(
-                lociMap = mutableMapOf(
+                loci = mutableMapOf(
                     LociPair(Mutation.ENCHI) to 1f,
                     LociPair(Mutation.PASTEL) to 1f,
                     LociPair(Mutation.HET_PIED, Mutation.HET_PIED) to 1f
@@ -165,7 +165,7 @@ private fun SpecimenRowNight() {
     ScitalysTheme {
         SpecimenRow(
             specimen = Specimen(
-                lociMap = mutableMapOf(
+                loci = mutableMapOf(
                     LociPair(Mutation.ENCHI) to 1f,
                     LociPair(Mutation.PASTEL) to 1f,
                     LociPair(Mutation.HET_PIED, Mutation.HET_PIED) to 1f

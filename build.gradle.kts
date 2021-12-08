@@ -76,9 +76,9 @@ dependencies {
 
 // Publishing
 
-val env = System.getenv()
-val github_usr = env["GITHUB_USR"]
-val github_key = env["GITHUB_PACKAGES_KEY"]
+val env: MutableMap<String, String> = System.getenv()
+val githubUsr = env["GITHUB_USR"]
+val githubKey = env["GITHUB_PACKAGES_KEY"]
 
 fun getVersionName(): String {
     return "1.2.6-alpha05"
@@ -115,8 +115,8 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/beneventolorenzo/ui")
             credentials {
-                username = github_usr
-                password = github_key
+                username = githubUsr
+                password = githubKey
             }
         }
     }
@@ -125,4 +125,10 @@ publishing {
 
 tasks.register("deleteArtifact", Delete::class.java) {
     delete("$buildDir/outputs/aar/${getArtifactId()}-release.aar")
+}
+
+tasks.withType(PublishToMavenRepository::class.java) {
+    dependsOn("test")
+    dependsOn("build")
+    mustRunAfter("deleteArtifact")
 }
